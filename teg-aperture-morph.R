@@ -58,8 +58,28 @@ pile(dorsal.center)
 dorsal.align <- coo_align(dorsal.center)
 pile(dorsal.align)
 
-dorsal.slide<-(coo_slidedirection(dorsal.align,direction="up"))
+ldk <- coo_ldk(dorsal.align, 1)
 
+i = 1
+while (i < length(dorsal.align) + 1) {
+  ldk[i] <- coo_ldk(dorsal.align[i], 1)
+  i = i + 1
+}
+
+i = 1
+while (i < length(dorsal.align) + 1) {
+  dorsal.slide[i] <- coo_slide(dorsal.align[i], id = 1, ldk = ldk[i])
+  i = i + 1
+}
+
+
+
+dorsal.slide <- coo_slide(dorsal.align[1], id = 1, ldk = ldk)
+pile(dorsal.slide)
+
+
+
+dorsal.slide<-(coo_slidedirection(dorsal.align,direction="up"))
 pile(dorsal.slide)
 
 calibrate_harmonicpower_efourier(dorsal.slide)
