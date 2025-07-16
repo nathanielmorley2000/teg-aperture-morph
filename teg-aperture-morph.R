@@ -2,7 +2,7 @@
 library("Momocs")
 library(dplyr)
 library(ggplot2)
-library(borealis)
+#library(borealis)
 library(dispRity)
 
 # load characteristics list
@@ -13,6 +13,37 @@ silhouettes.jpgs<-list.files("Data/Silhouettes/", full.names=T)
 returns <- import_jpg(silhouettes.jpgs, auto.notcentered = T)
 silhouettes<-Out(returns)
 pile(silhouettes)
+
+# Create a vector to store indices of the selected points
+selected_points <- data.frame(c(i, x, y))
+
+for (i in 1:length(silhouettes)) {
+  plot(silhouettes[i])
+  cat("Click on the homologous point for shape", i, "\n")
+  pt <- locator(1)
+  coords <- silhouettes[i]$coo
+  distances <- sqrt((coords[,1] - pt$x)^2 + (coords[,2] - pt$y)^2)
+  selected_points[x, i] <- pt$x #which.min(distances)
+}
+
+
+# Loop through each shape in the Momocs Out object
+for (i in 1:length(silhouettes)) {
+  plot(silhouettes[i], main = paste("Click homologous point for shape", i))
+  
+  # Manually click the homologous point
+  pt <- locator(1)
+  
+  # Extract the (x, y) coordinates of the current silhouette
+  coords <- silhouettes[i]$coo
+  
+  # Calculate distances from the clicked point to all outline points
+  distances <- sqrt((coords[, 1] - pt$x)^2 + (coords[, 2] - pt$y)^2)
+  
+  # Store the index of the closest point
+  selected_points[i] <- which.min(distances)
+}
+
 
 # minimize size differences
 dorsal.smooth <- coo_smooth(silhouettes, 100)
