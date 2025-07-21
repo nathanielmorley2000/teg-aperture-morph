@@ -9,13 +9,70 @@ library(dispRity)
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
 
 # import jpgs 
-silhouettes.jpgs<-list.files("Data/Silhouettes/", full.names=T)
+silhouettes.jpgs<-list.files("Data/PrasHighEnergy_Aligned/", full.names=T)
 returns <- import_jpg(silhouettes.jpgs, auto.notcentered = T)
+
+returns <- import_jpg("Data/PrasHighEnergy_Aligned/PrasTeg50.jpg")
 silhouettes<-Out(returns)
 pile(silhouettes)
 
-# minimize size differences
-dorsal.smooth <- coo_smooth(silhouettes, 100)
+# smooth, scale, and center silhouettes
+silhouettes.smooth <- coo_smooth(silhouettes, 1000)
+silhouettes.scale<-coo_scale(silhouettes.smooth)
+silhouettes.center<-coo_center(silhouettes.scale)
+
+# define landmark
+silhouettes.ldk <- def_ldk(silhouettes.center, 1)
+stack(ldk.version)
+
+# set landmark as starting point
+slide.silhouettes <- coo_slide(silhouettes.ldk,ldk = 1)
+stack(slide.silhouettes)
+
+
+out1_rev_coor_ldks <- coo_slide(ldk.version,ldk = 1)
+stack(out1_rev_coor_ldks)
+
+
+
+
+
+
+
+
+
+dorsal.align <- coo_align(dorsal.center)
+pile(dorsal.align)
+
+ldk.version <- def_ldk(dorsal.align, 1)
+stack(ldk.version)
+
+
+
+i = 1
+while (i < length(dorsal.align) + 1) {
+  dorsal.align$ldk[i] <- coo_ldk(dorsal.align[i], 1)
+  i = i + 1
+}
+
+stack(dorsal.align)
+
+prebot <- silhouettes %>% coo_center %>% coo_scale %>%
+  coo_align %>% coo_slidedirection("right")
+prebot %>% stack # some dephasing remains
+prebot %>% coo_slidedirection("right") %>% coo_untiltx() %>% stack # much better
+
+
+
+landmarked <- silhouettes %>% coo_center %>% coo_untiltx(ldk=1)
+
+
+
+
+
+
+
+dorsal.smooth <- coo_smooth(silhouettes, 1000)
 pile(dorsal.smooth)
 
 dorsal.scale<-coo_scale(dorsal.smooth)
@@ -33,7 +90,18 @@ while (i < length(dorsal.align) + 1) {
   i = i + 1
 }
 
-dorsal.slide<-coo_slide(dorsal.align, ldk = 1)
+prebot <- dorsal.align %>% coo_slidedirection("right")
+prebot %>% stack # some dephasing remains
+prebot %>% coo_slidedirection("right") %>% coo_untiltx() %>% stack # much better
+
+
+dorsal.align %>% coo_untiltx(ldk=1) %>% stack
+
+
+
+align.out <- Out(dorsal.align)
+
+dorsal.slide<-coo_slide(align.out, ldk = 1)
 pile(dorsal.slide)
 
 align.out <- Out(dorsal.slide)
