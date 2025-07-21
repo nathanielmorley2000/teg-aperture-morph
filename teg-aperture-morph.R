@@ -1,9 +1,9 @@
 # load libraries
 library("Momocs")
-library(dplyr)
-library(ggplot2)
+#library(dplyr)
+#library(ggplot2)
 #library(borealis)
-library(dispRity)
+#library(dispRity)
 
 # load characteristics list
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
@@ -23,15 +23,13 @@ silhouettes.center<-coo_center(silhouettes.scale)
 
 # define landmark
 silhouettes.ldk <- def_ldk(silhouettes.center, 1)
-stack(ldk.version)
+stack(silhouettes.ldk)
 
 # set landmark as starting point
 slide.silhouettes <- coo_slide(silhouettes.ldk,ldk = 1)
 stack(slide.silhouettes)
 
 
-out1_rev_coor_ldks <- coo_slide(ldk.version,ldk = 1)
-stack(out1_rev_coor_ldks)
 
 
 
