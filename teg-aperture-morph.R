@@ -1,21 +1,4 @@
 # load libraries
-library("StereoMorph")
-
-digitizeImage(image.file='Data/PrasiolaHighEnergy/', shapes.file='Data/Shapes/')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 library("Momocs")
 #library(dplyr)
 #library(ggplot2)
