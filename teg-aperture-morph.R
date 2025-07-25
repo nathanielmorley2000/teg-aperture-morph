@@ -1,4 +1,21 @@
 # load libraries
+library("StereoMorph")
+
+digitizeImage(image.file='Data/PrasiolaHighEnergy/', shapes.file='Data/Shapes/')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 library("Momocs")
 #library(dplyr)
 #library(ggplot2)
@@ -9,11 +26,11 @@ library("Momocs")
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
 
 # import jpgs 
-silhouettes.jpgs<-list.files("Data/PrasHighEnergy_Aligned/", full.names=T)
-returns <- import_jpg(silhouettes.jpgs, auto.notcentered = T)
+silhouettes.jpgs<-list.files("Data/PrasHighEnergy_Open/", full.names=T)
+returns <- import_Conte(silhouettes.jpgs)
 
 returns <- import_jpg("Data/PrasHighEnergy_Aligned/PrasTeg50.jpg")
-silhouettes<-Out(returns)
+silhouettes<-Coo(returns)
 pile(silhouettes)
 
 # smooth, scale, and center silhouettes
