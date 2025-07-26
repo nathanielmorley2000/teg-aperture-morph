@@ -2,4 +2,4 @@
 library("StereoMorph")
 
 # launch StereoMorph application
-digitizeImage(image.file='Data/PrasiolaHighEnergy/', shapes.file='Data/Shapes/')
+digitizeImages(image.file='Data/PrasiolaHighEnergy/', shapes.file='Data/Shapes/', curves.ref = "curves.txt")
