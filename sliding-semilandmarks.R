@@ -1,5 +1,9 @@
-# call packages
+# Call packages
 library("geomorph")
 
-# upload TPS file with semi-landmark data
-landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "ID")
+# Upload TPS file with semi-landmark data
+landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "ID", negNA = FALSE,
+                          readcurves = FALSE, warnmsg = TRUE)
+
+# Upload specimen characteristics data
+characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
