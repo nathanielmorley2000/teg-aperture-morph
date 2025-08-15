@@ -7,3 +7,6 @@ landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "ID", negNA
 
 # Upload specimen characteristics data
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
+
+# Upload sliders file
+sliders <- read.csv("Data/Sliders.csv", header = FALSE)
