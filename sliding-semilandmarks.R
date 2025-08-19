@@ -2,8 +2,8 @@
 library("geomorph")
 
 # Upload TPS file with semi-landmark data
-landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "ID", negNA = FALSE,
-                          readcurves = FALSE, warnmsg = TRUE)
+landmarks <- readland.tps(file = "Data/TegulaOutlines - Copy.TPS", specID = "ID", negNA = FALSE,
+                          readcurves = TRUE, warnmsg = TRUE)
 
 # Upload specimen characteristics data
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
