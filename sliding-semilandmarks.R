@@ -1,12 +1,18 @@
 # Call packages
 library("geomorph")
+library("stringr")
 
 # Upload TPS file with semi-landmark data
-landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "ID", negNA = FALSE,
+landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "imageID", negNA = FALSE,
                           readcurves = TRUE, warnmsg = TRUE)
 
+# Change specimen names to exclude directory information
+two.d.landmarks <- two.d.array(landmarks)
+rownames(two.d.landmarks) <- stringr::str_sub(rownames(two.d.landmarks), start = 78L)
+named.landmarks <- arrayspecs(two.d.landmarks, 90, 2)
+
 # Upload specimen characteristics data
-characteristics <- read.csv("Data/TegulaCharacteristicsList.csv")
+characteristics <- read.csv("Data/TegulaCharacteristicsList.csv", row.names = 1)
 
 # Upload sliders file
 curves <- as.matrix(read.csv("Data/Sliders.csv", header=T))
