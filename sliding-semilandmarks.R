@@ -14,11 +14,16 @@ named.landmarks <- arrayspecs(two.d.landmarks, 90, 2)
 # Upload specimen characteristics data
 characteristics <- read.csv("Data/TegulaCharacteristicsList.csv", row.names = 1)
 
-# Subset characteristics to only include those that were used in analysis
+# Subset characteristics to only include specimens that were used in analysis
 specific.characteristics <- characteristics[row.names(characteristics) %in% rownames(two.d.landmarks),]
 
 # Upload sliders file
 curves <- as.matrix(read.csv("Data/Sliders.csv", header=T))
+
+
+
+
+
 
 # Using Procrustes Distance for sliding
 A <- gpagen(landmarks,
