@@ -20,29 +20,17 @@ specific.characteristics <- characteristics[row.names(characteristics) %in% rown
 # Upload sliders file
 curves <- as.matrix(read.csv("Data/Sliders.csv", header=T))
 
+# Run Generalized Procrustes Analysis by using bending energy for sliding
+Procrustes <- gpagen(named.landmarks,
+                     curves = curves, 
+                     ProcD = FALSE, print.progress = TRUE)
+plot(Procrustes)
+summary(Procrustes)
 
-
-
-
-
-# Using Procrustes Distance for sliding
-A <- gpagen(landmarks,
-            curves = curves,
-            ProcD = TRUE, print.progress = TRUE)
-
-# Using bending energy for sliding
-B <- gpagen(landmarks,
-            curves = curves,
-            ProcD = FALSE, print.progress = FALSE)
-
-summary(A)
-summary(B)
-
-
-plotTangentSpace(A, axis1 = 1, axis2 = 2, warpgrids = TRUE, mesh = NULL, label = FALSE,
-                 groups = NULL, legend = FALSE)
-
-# Convert semi-landmark data into a 2-d array
-twod_landmarks <- two.d.array(landmarks)
-
+# Create PCA plot
+PCA <- gm.prcomp(Procrustes$coords)
+summary(PCA)
+plot(PCA, main = "PCA")
+plot(PCA, main = "PCA", flip = 1) # flip the first axis
+plot(PCA, main = "PCA", axis1 = 3, axis2 = 4) # change PCs viewed
 
