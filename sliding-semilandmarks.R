@@ -23,7 +23,7 @@ curves <- as.matrix(read.csv("Data/Sliders.csv", header=T))
 # Run Generalized Procrustes Analysis by using bending energy for sliding
 Procrustes <- gpagen(named.landmarks,
                      curves = curves, 
-                     ProcD = FALSE, print.progress = TRUE)
+                     ProcD = FALSE, print.progress = FALSE)
 plot(Procrustes)
 summary(Procrustes)
 
