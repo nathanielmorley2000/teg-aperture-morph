@@ -1,7 +1,7 @@
 # Call packages
 library("geomorph")
 library("stringr")
-#library("ggplot2")
+library("ggplot2")
 
 # Upload TPS file with semi-landmark data
 landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "imageID", negNA = FALSE,
@@ -28,6 +28,8 @@ Procrustes <- gpagen(named.landmarks,
 plot(Procrustes)
 summary(Procrustes)
 
+# 
+
 # Save GPA results to dataframe
 GPA.Results <- geomorph.data.frame(Procrustes, 
                                    location = as.factor(specific.characteristics$Location),
@@ -37,6 +39,14 @@ GPA.Results <- geomorph.data.frame(Procrustes,
 
 # Create PCA plot
 PCA <- gm.prcomp(GPA.Results$coords)
+PCA.plot <- plot(PCA)
+PCA.ggplot <- make_ggplot(PCA.plot)
+
+PCA.ggplot +
+  geom_point() +
+  theme_classic()
+
+
 PCA.Energy <- plot(PCA, main = "PCA", col = GPA.Results$energy, theme = classic)
 shapeHulls(PCA.Energy, groups = GPA.Results$energy,
            group.cols = 1:3, 
