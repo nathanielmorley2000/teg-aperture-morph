@@ -3,6 +3,8 @@ library("geomorph")
 library("stringr")
 library("ggplot2")
 
+############################## Generalized Procrustes Analysis ##############################
+
 # Upload TPS file with semi-landmark data
 landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "imageID", negNA = FALSE,
                           readcurves = TRUE, warnmsg = TRUE)
@@ -38,9 +40,24 @@ GPA.Results <- geomorph.data.frame(Procrustes,
                                    energy = as.factor(specific.characteristics$Energy.Setting),
                                    repairs = as.factor(specific.characteristics$Repair.Scars..0.1.))
 
+#############################################################################################
 
-# Create PCA plot
+############################## Ordinations and Statistical Analysis ##############################
+
+# Analysis for energy gradient and repair scars
+# Produce PCA
 PCA <- gm.prcomp(GPA.Results$coords)
+
+
+
+
+
+
+
+
+
+
+
 PCA.plot <- plot(PCA)
 PCA.ggplot <- make_ggplot(PCA.plot)
 
@@ -86,3 +103,4 @@ plot(PCA, main = "PCA")
 plot(PCA, main = "PCA", flip = 1) # flip the first axis
 plot(PCA, main = "PCA", axis1 = 3, axis2 = 4) # change PCs viewed
 
+##################################################################################################
