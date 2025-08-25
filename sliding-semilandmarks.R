@@ -28,7 +28,9 @@ Procrustes <- gpagen(named.landmarks,
 plot(Procrustes)
 summary(Procrustes)
 
-# 
+# Save Procrustes coordinates results as CSV file
+two.d.Procrustes <- two.d.array(Procrustes$coords)
+write.csv(two.d.Procrustes, "Results/ProcrustesCoords.csv")
 
 # Save GPA results to dataframe
 GPA.Results <- geomorph.data.frame(Procrustes, 
