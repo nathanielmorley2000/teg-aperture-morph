@@ -38,69 +38,50 @@ write.csv(two.d.Procrustes, "Results/ProcrustesCoords.csv")
 GPA.Results <- geomorph.data.frame(Procrustes, 
                                    location = as.factor(specific.characteristics$Location),
                                    energy = as.factor(specific.characteristics$Energy.Setting),
-                                   repairs = as.factor(specific.characteristics$Repair.Scars..0.1.))
+                                   repairs = as.factor(specific.characteristics$Repair.Scars..0.1.),
+                                   height = as.numeric(specific.characteristics$Height..mm.))
 
 #############################################################################################
 
 ############################## Ordinations and Statistical Analysis ##############################
 
-# Analysis for energy gradient and repair scars
-# Produce PCA
+# Produce simple PCA (no size correction)
 PCA <- gm.prcomp(GPA.Results$coords)
+plot(PCA, col = GPA.Results$location)
+legend("bottomright", legend = levels(GPA.Results$location), 
+       col = 1:3, pch = 16)
+
+# Produce simple allometry PCA
+fit <- procD.lm(coords ~ log(height), data = GPA.Results,
+                print.progress = FALSE)
+plotAllometry(fit, size = GPA.Results$height, logsz = TRUE,
+              method = "RegScore", pch = 19)
 
 
+# Produce group allometries
+fit2 <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
+                print.progress = FALSE)
+fit3 <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
+                 print.progress = FALSE)
+
+plot2 <- plotAllometry(fit2, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
+              pch = 19, col = as.numeric(GPA.Results$location))
+legend("bottomright", legend = levels(GPA.Results$location), 
+       col = 1:3, pch = 16)
+
+morph <- morphol.disparity(fit2)
+summary(morph)
 
 
+# find how shape changes along PC axes
+ref <- mshape(Procrustes$coords)
+plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
+plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
 
+# Mathers = 1 = black
+# Prasiola = 2 = red
+# Strawberry = 3 = green
 
-
-
-
-
-
-PCA.plot <- plot(PCA)
-PCA.ggplot <- make_ggplot(PCA.plot)
-
-PCA.ggplot +
-  geom_point() +
-  theme_classic()
-
-
-PCA.Energy <- plot(PCA, main = "PCA", col = GPA.Results$energy, theme = classic)
-shapeHulls(PCA.Energy, groups = GPA.Results$energy,
-           group.cols = 1:3, 
-           group.lwd = c(3,3,3))
-legend("bottomright", c("High", "Low", "Moderate"), 
-       col = 1:3, lwd = 2)
-
-
-pc.plot <- plot(pleth.phylo, phylo = TRUE)
-gp <- factor(c(rep(1, 5), rep(2, 4)))
-shapeHulls(pc.plot, groups = gp, group.cols = 1:2, 
-           group.lwd = rep(2, 2), group.lty = c(2, 1))
-legend("topright", c("P. cinereus clade", "P. hubrichti clade"), 
-       col = 1:2, lwd = 2, lty = c(2, 1))
-
-
-
-
-
-
-
-
-
-
-
-plot(PCA, main = "PCA", col = GPA.Results$repairs)
-
-
-PCA.Plot <- plot(PCA, main = "PCA")
-picknplot.shape(PCA.Plot)
-
-
-summary(PCA)
-plot(PCA, main = "PCA")
-plot(PCA, main = "PCA", flip = 1) # flip the first axis
-plot(PCA, main = "PCA", axis1 = 3, axis2 = 4) # change PCs viewed
+picknplot.shape(plot2)
 
 ##################################################################################################
