@@ -118,7 +118,7 @@ PCA_Plot3 <- ggplot() +
 
 # Compile master plot with PCs and scree plot
 master_plot <- grid.arrange(scree_plot, PCA_Plot2, PCA_Plot3, layout_matrix = matrix(c(1, 2, 1, 3), nrow = 2))
-ggsave("PCA.png", master_plot, height = 9, width = 18, units = "in")
+ggsave("PCA.png", master_plot, height = 4.5, width = 9, units = "in")
 
 
 
