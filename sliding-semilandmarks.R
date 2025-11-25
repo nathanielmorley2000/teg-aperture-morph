@@ -68,7 +68,7 @@ scree_plot <- ggplot(data = prop[1:9,], aes(x = name, y = value)) +
   geom_col(fill = "blue3") +
   xlab("Principal Component") +
   ylab("Proportion of Variance Explained") +
-  ggtitle("Scree Plot") +
+  ggtitle("A") +
   theme_test()
 scree_plot
 
@@ -91,6 +91,7 @@ PCA_Plot2 <- ggplot() +
                                    shape = Location), size = 3) + # Points
   xlab("PC1: 32.9%") +
   ylab("PC2: 15.2%") +
+  ggtitle("B") +
   theme_test()
 PCA_Plot2
 
@@ -114,11 +115,12 @@ PCA_Plot3 <- ggplot() +
                                      shape = Location), size = 3) + # Points
   xlab("PC1: 32.9%") +
   ylab("PC3: 11.7%") +
+  ggtitle("C") +
   theme_test()
 
 # Compile master plot with PCs and scree plot
 master_plot <- grid.arrange(scree_plot, PCA_Plot2, PCA_Plot3, layout_matrix = matrix(c(1, 2, 1, 3), nrow = 2))
-ggsave("PCA.png", master_plot, height = 4.5, width = 9, units = "in")
+ggsave("Results/PCA.png", master_plot, height = 7, width = 9, units = "in")
 
 
 
