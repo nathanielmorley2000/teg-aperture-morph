@@ -75,6 +75,7 @@ scree_plot <- ggplot(data = prop[1:9,], aes(x = name, y = value)) +
   theme_test()
 scree_plot
 
+
 # PC1 and PC2
 ## Create function to calculate the convex hull for each group
 find_hull1 <- function(df) df[chull(df$PC1, df$PC2), ]
@@ -99,6 +100,7 @@ PCA_Plot1 <- ggplot() +
   theme_test()
 PCA_Plot1
 
+
 # PC1 and PC3
 ## Create function to calculate the convex hull for each group
 find_hull2 <- function(df) df[chull(df$PC1, df$PC3), ]
@@ -122,9 +124,36 @@ PCA_Plot2 <- ggplot() +
   ggtitle("C") +
   theme_test()
 
+
 # Compile master plot with PCs and scree plot
 master_plot <- grid.arrange(scree_plot, PCA_Plot1, PCA_Plot2, layout_matrix = matrix(c(1, 2, 1, 3), nrow = 2))
 ggsave("Results/PCA.png", master_plot, height = 7, width = 9, units = "in")
+
+
+# Create tps deformation plot to see how shape changes along axes
+## Set reference shape
+ref <- mshape(Procrustes$coords)
+
+## Save as svg
+png(filename = "Results/tpsDeformations.png", height = 700, width = 500, units = "px", res = 150)
+
+## Set up plot layout
+par(mfrow=c(3,2), family="serif", mai=c(0.1,0.1,0.1,0.1))
+
+## Produce tps deformations
+plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
+plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
+plotRefToTarget(PCA$shapes$shapes.comp2$min, ref, method="TPS") #PC2 minimum value
+plotRefToTarget(PCA$shapes$shapes.comp2$max, ref, method="TPS") #PC2 maximum value
+plotRefToTarget(PCA$shapes$shapes.comp3$min, ref, method="TPS") #PC3 minimum value
+plotRefToTarget(PCA$shapes$shapes.comp3$max, ref, method="TPS") #PC3 maximum value
+
+## Turn graphics device off
+dev.off()
+
+
+
+
 
 # Check assumptions of PC1 for one-way ANOVA
 ggplot() +
@@ -136,14 +165,7 @@ pairwise.wilcox.test(PCA_Results$PC1, PCA_Results$Location,
                      p.adjust.method = "holm")
 
 
-# find how shape changes along PC axes
-ref <- mshape(Procrustes$coords)
-PC1Min <- plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
-PC1Max <- plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
-PC2Min <- plotRefToTarget(PCA$shapes$shapes.comp2$min, ref, method="TPS") #PC2 minimum value
-PC2Max <- plotRefToTarget(PCA$shapes$shapes.comp2$max, ref, method="TPS") #PC2 maximum value
-PC3Min <- plotRefToTarget(PCA$shapes$shapes.comp3$min, ref, method="TPS") #PC3 minimum value
-PC3Max <- plotRefToTarget(PCA$shapes$shapes.comp3$max, ref, method="TPS") #PC3 maximum value
+
 
 # Compile master plot with PCs and scree plot
 master_tps <- grid.arrange(PC1Min, PC1Max, PC2Min, PC2Max, PC3Min, PC3Max,
