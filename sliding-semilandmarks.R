@@ -6,7 +6,9 @@ library("tidyr")
 library("ggplot2")
 library("gridExtra")
 
+#############################################################################################
 ############################## Generalized Procrustes Analysis ##############################
+#############################################################################################
 
 # Upload TPS file with semi-landmark data
 landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "imageID", negNA = FALSE,
@@ -44,9 +46,9 @@ GPA.Results <- geomorph.data.frame(Procrustes,
                                    repairs = as.factor(specific.characteristics$Repair.Scars..0.1.),
                                    height = as.numeric(specific.characteristics$Height..mm.))
 
-#############################################################################################
-
+##################################################################################################
 ############################## Ordinations and Statistical Analysis ##############################
+##################################################################################################
 
 # Produce simple PCA (no size correction)
 PCA <- gm.prcomp(GPA.Results$coords)
@@ -59,11 +61,12 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC1 = PCA$x[,1],
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
-
-# Make scree plot
+# Make Scree Plot
+## Calculate loadings
 prop <- data.frame(as.list(PCA$d/sum(PCA$d))) %>%
   pivot_longer(cols = 1:89)
 
+## Produce and preview plot
 scree_plot <- ggplot(data = prop[1:9,], aes(x = name, y = value)) +
   geom_col(fill = "blue3") +
   xlab("Principal Component") +
@@ -72,41 +75,42 @@ scree_plot <- ggplot(data = prop[1:9,], aes(x = name, y = value)) +
   theme_test()
 scree_plot
 
-# create function to calculate the convex hull for each group
-find_hull <- function(df) df[chull(df$PC1, df$PC2), ]
+# PC1 and PC2
+## Create function to calculate the convex hull for each group
+find_hull1 <- function(df) df[chull(df$PC1, df$PC2), ]
 
-# apply the function to your PCA scores grouped by your factor
-PCA_Hulls2 <- PCA_Results %>%
+## Apply the function to your PCA scores grouped by your factor
+PCA_Hulls1 <- PCA_Results %>%
   group_by(Location) %>%
-  do(find_hull(.))
+  do(find_hull1(.))
 
-# Plot PC Axes 1 and 2
-PCA_Plot2 <- ggplot() +
-  geom_polygon(data = PCA_Hulls2, aes(x = PC1,
-                                     y = PC2, 
-                                     fill = Location), alpha = 0.2) + # Convex hulls 
+## Plot PC Axes 1 and 2
+PCA_Plot1 <- ggplot() +
+  geom_polygon(data = PCA_Hulls1, aes(x = PC1,
+                                      y = PC2,
+                                      fill = Location), alpha = 0.2) + # Convex hulls 
   geom_point(data = PCA_Results, aes(x = PC1,
-                                   y = PC2,
-                                   color = Location,
-                                   shape = Location), size = 3) + # Points
+                                     y = PC2,
+                                     color = Location,
+                                     shape = Location), size = 3) + # Points
   xlab("PC1: 32.9%") +
   ylab("PC2: 15.2%") +
   ggtitle("B") +
   theme_test()
-PCA_Plot2
+PCA_Plot1
 
+# PC1 and PC3
+## Create function to calculate the convex hull for each group
+find_hull2 <- function(df) df[chull(df$PC1, df$PC3), ]
 
-# create function to calculate the convex hull for each group
-find_hull <- function(df) df[chull(df$PC1, df$PC3), ]
-
-# apply the function to your PCA scores grouped by your factor
-PCA_Hulls3 <- PCA_Results %>%
+## Apply the function to your PCA scores grouped by your factor
+PCA_Hulls2 <- PCA_Results %>%
   group_by(Location) %>%
-  do(find_hull(.))
+  do(find_hull2(.))
 
-# Plot PC Axes 1 and 3
-PCA_Plot3 <- ggplot() +
-  geom_polygon(data = PCA_Hulls3, aes(x = PC1,
+## Plot PC Axes 1 and 3
+PCA_Plot2 <- ggplot() +
+  geom_polygon(data = PCA_Hulls2, aes(x = PC1,
                                       y = PC3, 
                                       fill = Location), alpha = 0.2) + # Convex hulls 
   geom_point(data = PCA_Results, aes(x = PC1,
@@ -119,8 +123,45 @@ PCA_Plot3 <- ggplot() +
   theme_test()
 
 # Compile master plot with PCs and scree plot
-master_plot <- grid.arrange(scree_plot, PCA_Plot2, PCA_Plot3, layout_matrix = matrix(c(1, 2, 1, 3), nrow = 2))
+master_plot <- grid.arrange(scree_plot, PCA_Plot1, PCA_Plot2, layout_matrix = matrix(c(1, 2, 1, 3), nrow = 2))
 ggsave("Results/PCA.png", master_plot, height = 7, width = 9, units = "in")
+
+# Check assumptions of PC1 for one-way ANOVA
+ggplot() +
+  geom_boxplot(data = PCA_Results, aes (x = Location, y = PC1, fill = Location))
+
+# Too many outliers. Perform Kruskal-Wallis test
+kruskal.test(PC1 ~ Location, data = PCA_Results)
+pairwise.wilcox.test(PCA_Results$PC1, PCA_Results$Location,
+                     p.adjust.method = "holm")
+
+
+# find how shape changes along PC axes
+ref <- mshape(Procrustes$coords)
+PC1Min <- plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
+PC1Max <- plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
+PC2Min <- plotRefToTarget(PCA$shapes$shapes.comp2$min, ref, method="TPS") #PC2 minimum value
+PC2Max <- plotRefToTarget(PCA$shapes$shapes.comp2$max, ref, method="TPS") #PC2 maximum value
+PC3Min <- plotRefToTarget(PCA$shapes$shapes.comp3$min, ref, method="TPS") #PC3 minimum value
+PC3Max <- plotRefToTarget(PCA$shapes$shapes.comp3$max, ref, method="TPS") #PC3 maximum value
+
+# Compile master plot with PCs and scree plot
+master_tps <- grid.arrange(PC1Min, PC1Max, PC2Min, PC2Max, PC3Min, PC3Max,
+                           layout_matrix = matrix(c(1, 2, 3, 4, 5, 6), nrow = 2))
+
+
+
+PC1Min
+
+
+
+
+
+
+
+
+
+
 
 
 
