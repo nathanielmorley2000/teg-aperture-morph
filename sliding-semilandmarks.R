@@ -6,6 +6,7 @@ library("tidyr")
 library("ggplot2")
 library("gridExtra")
 
+
 #############################################################################################
 ############################## Generalized Procrustes Analysis ##############################
 #############################################################################################
@@ -46,6 +47,7 @@ GPA.Results <- geomorph.data.frame(Procrustes,
                                    repairs = as.factor(specific.characteristics$Repair.Scars..0.1.),
                                    height = as.numeric(specific.characteristics$Height..mm.))
 
+
 ##################################################################################################
 ############################## Ordinations and Statistical Analysis ##############################
 ##################################################################################################
@@ -61,6 +63,7 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC1 = PCA$x[,1],
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
+
 # Make Scree Plot
 ## Calculate loadings
 prop <- data.frame(as.list(PCA$d/sum(PCA$d))) %>%
@@ -151,41 +154,23 @@ plotRefToTarget(PCA$shapes$shapes.comp3$max, ref, method="TPS") #PC3 maximum val
 ## Turn graphics device off
 dev.off()
 
-
-
-
-
-# Check assumptions of PC1 for one-way ANOVA
-ggplot() +
-  geom_boxplot(data = PCA_Results, aes (x = Location, y = PC1, fill = Location))
-
-# Too many outliers. Perform Kruskal-Wallis test
+# Perform Kruskal-Wallis test to test significance along PC1
 kruskal.test(PC1 ~ Location, data = PCA_Results)
 pairwise.wilcox.test(PCA_Results$PC1, PCA_Results$Location,
                      p.adjust.method = "holm")
 
+# Perform Kruskal-Wallis test to test significance along PC2
+kruskal.test(PC2 ~ Location, data = PCA_Results)
+
+# Perform Kruskal-Wallis test to test significance along PC3
+kruskal.test(PC3 ~ Location, data = PCA_Results)
+pairwise.wilcox.test(PCA_Results$PC3, PCA_Results$Location,
+                     p.adjust.method = "holm")
 
 
-
-# Compile master plot with PCs and scree plot
-master_tps <- grid.arrange(PC1Min, PC1Max, PC2Min, PC2Max, PC3Min, PC3Max,
-                           layout_matrix = matrix(c(1, 2, 3, 4, 5, 6), nrow = 2))
-
-
-
-PC1Min
-
-
-
-
-
-
-
-
-
-
-
-
+###############################################################################
+############################## Allometric Models ##############################
+###############################################################################
 
 # Produce simple allometry PCA
 fit <- procD.lm(coords ~ log(height), data = GPA.Results,
