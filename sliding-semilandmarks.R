@@ -172,37 +172,38 @@ pairwise.wilcox.test(PCA_Results$PC3, PCA_Results$Location,
 ############################## Allometric Models ##############################
 ###############################################################################
 
-# Produce simple allometry PCA
-fit <- procD.lm(coords ~ log(height), data = GPA.Results,
+# Produce common allometry model
+commonAllometry <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
                 print.progress = FALSE)
-plotAllometry(fit, size = GPA.Results$height, logsz = TRUE,
-              method = "RegScore", pch = 19)
 
-
-# Produce group allometries
-fit2 <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
-                print.progress = FALSE)
-fit3 <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
+# Produce unique allometries model
+uniqueAllometry <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
                  print.progress = FALSE)
 
-plot2 <- plotAllometry(fit2, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
+# Compare models to find which is most likely
+modComp <- model.comparison(commonAllometry, uniqueAllometry, 
+                            type = "logLik")
+modCompData <- summary(modComp)
+write.csv(modCompData, "Results/modCompData.csv")
+
+# Model output for common allometry model (most likely)
+commonAllometryData <- summary(commonAllometry)$table
+write.csv(commonAllometryData, "Results/commonAllometryData.csv", row.names = TRUE)
+
+
+plotRefToTarget( PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
+
+
+plot2 <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
               pch = 19, col = as.numeric(GPA.Results$location))
+
+make_ggplot(plot2)
+
 legend("bottomright", legend = levels(GPA.Results$location), 
        col = 1:3, pch = 16)
 
 morph <- morphol.disparity(fit2)
 summary(morph)
 
-
-# find how shape changes along PC axes
-ref <- mshape(Procrustes$coords)
-plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
-plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
-
-# Mathers = 1 = black
-# Prasiola = 2 = red
-# Strawberry = 3 = green
-
-picknplot.shape(plot2)
 
 ##################################################################################################
