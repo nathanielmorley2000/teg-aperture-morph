@@ -1,0 +1,3 @@
+"","logLik","residual.pc.no","penalty","AIC"
+"log(height) + location",9784.22647220601,89,8722,-10846.452944412
+"log(height) + location + log(height):location",9785.48756236353,89,9078,-10492.9751247271
