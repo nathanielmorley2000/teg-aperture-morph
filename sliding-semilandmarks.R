@@ -208,7 +208,8 @@ niceAllometryPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           colour = Location,
                                                           shape = Location)) +
   geom_point(size = 3) +
-  geom_hline(yintercept = 0) +
+  geom_smooth(method = "lm", se = FALSE) +
+  #geom_hline(yintercept = 0) +
   xlab("log(Spire Height [mm])") +
   ylab("Standardized Shape Scores") +
   theme_test()
