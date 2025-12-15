@@ -1,8 +1,10 @@
 # Call packages
 library("geomorph")
+library("RRPP")
 library("stringr")
 library("dplyr")
 library("tidyr")
+library("tibble")
 library("ggplot2")
 library("gridExtra")
 
@@ -190,20 +192,26 @@ write.csv(modCompData, "Results/modCompData.csv")
 commonAllometryData <- summary(commonAllometry)$table
 write.csv(commonAllometryData, "Results/commonAllometryData.csv", row.names = TRUE)
 
+# Create allometry plot using default graphics
+allometryPlot <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
+                               pch = 19, col = as.numeric(GPA.Results$location))
 
-plotRefToTarget( PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
+# Create data frame with allometry plot for ggplot
+allometryPlotData <- data.frame(Predictor = allometryPlot[["plot_args"]][["x"]],
+                                Regression.Scores = allometryPlot[["plot_args"]][["y"]]) %>%
+  rownames_to_column(var = "Specimen") %>%
+  add_column(Location = specific.characteristics$Location, .after = 1)
+  
+# Create nice allometry plot
+niceAllometryPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
+                                                          y = Regression.Scores,
+                                                          colour = Location,
+                                                          shape = Location)) +
+  geom_point(size = 3) +
+  geom_hline(yintercept = 0) +
+  ylab("Regression Scores") +
+  theme_test()
 
-
-plot2 <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
-              pch = 19, col = as.numeric(GPA.Results$location))
-
-make_ggplot(plot2)
-
-legend("bottomright", legend = levels(GPA.Results$location), 
-       col = 1:3, pch = 16)
-
-morph <- morphol.disparity(fit2)
-summary(morph)
-
+ggsave("Results/AllometryResiduals.png", niceAllometryPlot)
 
 ##################################################################################################
