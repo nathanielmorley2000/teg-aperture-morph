@@ -203,17 +203,37 @@ allometryPlotData <- data.frame(Predictor = allometryPlot[["plot_args"]][["x"]],
   add_column(Location = specific.characteristics$Location, .after = 1)
   
 # Create nice allometry plot
-niceAllometryPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
+allometryLinePlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
+                                                          y = Regression.Scores,
+                                                          colour = Location)) +
+  geom_smooth(method = "lm", se = FALSE, aes(linetype = Location)) +
+  xlim(2.50, 3.50) +
+  ylim(-0.15, 0.15) +
+  xlab("log(Spire Height [mm])") +
+  ylab("Standardized Shape Scores") +
+  ggtitle("A") +
+  theme_test() +
+  theme(legend.position = "bottom",
+        legend.title=element_blank())
+
+allometryScatterPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           y = Regression.Scores,
                                                           colour = Location,
                                                           shape = Location)) +
   geom_point(size = 3) +
-  geom_smooth(method = "lm", se = FALSE) +
-  #geom_hline(yintercept = 0) +
+  xlim(2.50, 3.50) +
+  ylim(-0.15, 0.15) +
   xlab("log(Spire Height [mm])") +
   ylab("Standardized Shape Scores") +
-  theme_test()
+  ggtitle("B") +
+  theme_test() +
+  theme(legend.position = "bottom",
+        legend.title=element_blank())
 
-ggsave("Results/AllometryResiduals.png", niceAllometryPlot)
+niceAllometryPlot <- grid.arrange(allometryLinePlot, allometryScatterPlot, layout_matrix = matrix(c(1, 2), nrow = 1))
+niceAllometryPlot
+
+ggsave("Results/AllometryResiduals.png", niceAllometryPlot,
+       width = 10, height = 5, units = "in")
 
 ##################################################################################################
