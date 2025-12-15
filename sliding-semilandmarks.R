@@ -209,7 +209,8 @@ niceAllometryPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           shape = Location)) +
   geom_point(size = 3) +
   geom_hline(yintercept = 0) +
-  ylab("Regression Scores") +
+  xlab("log(Spire Height [mm])") +
+  ylab("Standardized Shape Scores") +
   theme_test()
 
 ggsave("Results/AllometryResiduals.png", niceAllometryPlot)
