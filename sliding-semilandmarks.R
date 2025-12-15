@@ -146,12 +146,12 @@ png(filename = "Results/tpsDeformations.png", height = 700, width = 500, units =
 par(mfrow=c(3,2), family="serif", mai=c(0.1,0.1,0.1,0.1))
 
 ## Produce tps deformations
-plotRefToTarget(PCA$shapes$shapes.comp1$min, ref, method="TPS") #PC1 minimum value
-plotRefToTarget(PCA$shapes$shapes.comp1$max, ref, method="TPS") #PC1 maximum value
-plotRefToTarget(PCA$shapes$shapes.comp2$min, ref, method="TPS") #PC2 minimum value
-plotRefToTarget(PCA$shapes$shapes.comp2$max, ref, method="TPS") #PC2 maximum value
-plotRefToTarget(PCA$shapes$shapes.comp3$min, ref, method="TPS") #PC3 minimum value
-plotRefToTarget(PCA$shapes$shapes.comp3$max, ref, method="TPS") #PC3 maximum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") #PC1 minimum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS") #PC1 maximum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS") #PC2 minimum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS") #PC2 maximum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS") #PC3 minimum value
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS") #PC3 maximum value
 
 ## Turn graphics device off
 dev.off()
