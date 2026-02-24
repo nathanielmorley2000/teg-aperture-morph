@@ -7,11 +7,11 @@ library("tidyr")
 library("tibble")
 library("ggplot2")
 library("gridExtra")
+library("plotly")
+library("htmlwidgets")
 
 
-#############################################################################################
-############################## Generalized Procrustes Analysis ##############################
-#############################################################################################
+# MORPHOMETRICS ================================================================
 
 # Upload TPS file with semi-landmark data
 landmarks <- readland.tps(file = "Data/TegulaOutlines.TPS", specID = "imageID", negNA = FALSE,
@@ -50,9 +50,8 @@ GPA.Results <- geomorph.data.frame(Procrustes,
                                    height = as.numeric(specific.characteristics$Height..mm.))
 
 
-##################################################################################################
-############################## Ordinations and Statistical Analysis ##############################
-##################################################################################################
+
+# MOPRHOLOGICAL VARIATION ======================================================
 
 # Produce simple PCA (no size correction)
 PCA <- gm.prcomp(GPA.Results$coords)
@@ -66,14 +65,39 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
 
+# Create three-dimensional PCA plot
+interactive_PCA <- plot_ly(data = PCA_Results,
+                           x = ~PC1,
+                           y = ~PC2,
+                           z = ~PC3,
+                           color = ~Location,
+                           type = "scatter3d",
+                           mode = "markers")
 
-plotly::plot_ly(data = PCA_Results,
-                x = ~PC1,
-                y = ~PC2,
-                z = ~PC3,
-                color = ~Location,
-                type = "scatter3d",
-                mode = "markers")
+# Save 3D plot as interactive HTML file
+saveWidget(as_widget(interactive_PCA), "Interactive_PCA.html")
+
+# Save 3D plot as static PDF
+save_image(interactive_PCA, "Static_PCA.pdf")
+
+
+# Perform a MANOVA on the three-dimensional PCA
+res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
+summary.aov(res.main)
+
+
+
+
+
+as.matrix(PCA_Results[1:30,4:6])
+
+
+
+
+
+
+
+
 
 # Make Scree Plot
 ## Calculate loadings
@@ -179,9 +203,9 @@ pairwise.wilcox.test(PCA_Results$PC3, PCA_Results$Location,
                      p.adjust.method = "holm")
 
 
-###############################################################################
-############################## Allometric Models ##############################
-###############################################################################
+
+
+# ALLOMETRIC VARIATION =========================================================
 
 # Produce common allometry model
 commonAllometry <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
@@ -244,5 +268,3 @@ niceAllometryPlot
 
 ggsave("Results/AllometryResiduals.png", niceAllometryPlot,
        width = 10, height = 5, units = "in")
-
-##################################################################################################
