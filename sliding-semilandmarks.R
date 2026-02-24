@@ -66,6 +66,15 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
 
+
+plotly::plot_ly(data = PCA_Results,
+                x = ~PC1,
+                y = ~PC2,
+                z = ~PC3,
+                color = ~Location,
+                type = "scatter3d",
+                mode = "markers")
+
 # Make Scree Plot
 ## Calculate loadings
 prop <- data.frame(as.list(PCA$d/sum(PCA$d))) %>%
