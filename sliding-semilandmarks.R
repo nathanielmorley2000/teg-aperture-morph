@@ -11,6 +11,7 @@ library("plotly")
 library("htmlwidgets")
 
 
+
 # MORPHOMETRICS ================================================================
 
 # Upload TPS file with semi-landmark data
@@ -53,7 +54,9 @@ GPA.Results <- geomorph.data.frame(Procrustes,
 
 # MOPRHOLOGICAL VARIATION ======================================================
 
-# Produce simple PCA (no size correction)
+## Make PCA ====================================================================
+
+#Produce simple PCA (no size correction)
 PCA <- gm.prcomp(GPA.Results$coords)
 summary(PCA)
 
@@ -64,6 +67,10 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC1 = PCA$x[,1],
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
+
+
+
+## Plot ordination =============================================================
 
 # Create three-dimensional PCA plot
 interactive_PCA <- plot_ly(data = PCA_Results,
@@ -81,11 +88,19 @@ saveWidget(as_widget(interactive_PCA), "Interactive_PCA.html")
 save_image(interactive_PCA, "Static_PCA.pdf")
 
 
+
+## Perform statistics ==========================================================
+
 # Perform a MANOVA on the three-dimensional PCA
 res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
-summary.aov(res.main)
+MANOVA_Table <- summary(res.main) # Significant omnibus results (p << 0.001)
+MANOVA_Table
+
+# Perform ANOVA to identify which axes are significant
+ANOVA_Table <- summary.aov(res.main) # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
 
 
+TukeyHSD(summary.aov(res.main))
 
 
 
@@ -168,17 +183,17 @@ master_plot <- grid.arrange(scree_plot, PCA_Plot1, PCA_Plot2, layout_matrix = ma
 ggsave("Results/PCA.png", master_plot, height = 7, width = 9, units = "in")
 
 
-# Create tps deformation plot to see how shape changes along axes
-## Set reference shape
+## TPS deformations ============================================================
+# Set reference shape
 ref <- mshape(Procrustes$coords)
 
-## Save as svg
+# Save as svg
 png(filename = "Results/tpsDeformations.png", height = 700, width = 500, units = "px", res = 150)
 
-## Set up plot layout
+# Set up plot layout
 par(mfrow=c(3,2), family="serif", mai=c(0.1,0.1,0.1,0.1))
 
-## Produce tps deformations
+# Produce tps deformations
 plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") #PC1 minimum value
 plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS") #PC1 maximum value
 plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS") #PC2 minimum value
@@ -186,7 +201,7 @@ plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS") #PC2 maximum val
 plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS") #PC3 minimum value
 plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS") #PC3 maximum value
 
-## Turn graphics device off
+# Turn graphics device off
 dev.off()
 
 # Perform Kruskal-Wallis test to test significance along PC1
