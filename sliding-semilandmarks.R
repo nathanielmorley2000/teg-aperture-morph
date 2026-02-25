@@ -82,10 +82,10 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            mode = "markers")
 
 # Save 3D plot as interactive HTML file
-saveWidget(as_widget(interactive_PCA), "Interactive_PCA.html")
+saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
 
 # Save 3D plot as static JPEG file
-orca(interactive_PCA, "Static_PCA.jpeg", scale = 1.5)
+orca(interactive_PCA, "Results/MorphologyResults/Static_PCA.jpeg", scale = 1.5)
 
 
 
@@ -105,11 +105,12 @@ TukeyHSD(summary.aov(res.main))
 
 
 ## TPS deformations ============================================================
+
 # Set reference shape
 ref <- mshape(Procrustes$coords)
 
 # Save as svg
-png(filename = "Results/tpsDeformations.png", height = 700, width = 500, units = "px", res = 150)
+png(filename = "Results/MorphologyResults/tpsDeformations.jpeg", height = 700, width = 500, units = "px", res = 150)
 
 # Set up plot layout
 par(mfrow=c(3,2), family="serif", mai=c(0.1,0.1,0.1,0.1))
