@@ -126,20 +126,6 @@ plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS") #PC3 maximum val
 # Turn graphics device off
 dev.off()
 
-# Perform Kruskal-Wallis test to test significance along PC1
-kruskal.test(PC1 ~ Location, data = PCA_Results)
-pairwise.wilcox.test(PCA_Results$PC1, PCA_Results$Location,
-                     p.adjust.method = "holm")
-
-# Perform Kruskal-Wallis test to test significance along PC2
-kruskal.test(PC2 ~ Location, data = PCA_Results)
-
-# Perform Kruskal-Wallis test to test significance along PC3
-kruskal.test(PC3 ~ Location, data = PCA_Results)
-pairwise.wilcox.test(PCA_Results$PC3, PCA_Results$Location,
-                     p.adjust.method = "holm")
-
-
 
 
 # ALLOMETRIC VARIATION =========================================================
@@ -156,11 +142,11 @@ uniqueAllometry <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
 modComp <- model.comparison(commonAllometry, uniqueAllometry, 
                             type = "logLik")
 modCompData <- summary(modComp)
-write.csv(modCompData, "Results/modCompData.csv")
+write.csv(modCompData, "Results/AllometryResults/modCompData.csv")
 
 # Model output for common allometry model (most likely)
 commonAllometryData <- summary(commonAllometry)$table
-write.csv(commonAllometryData, "Results/commonAllometryData.csv", row.names = TRUE)
+write.csv(commonAllometryData, "Results/AllometryResults/commonAllometryData.csv", row.names = TRUE)
 
 # Create allometry plot using default graphics
 allometryPlot <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
@@ -203,5 +189,5 @@ allometryScatterPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
 niceAllometryPlot <- grid.arrange(allometryLinePlot, allometryScatterPlot, layout_matrix = matrix(c(1, 2), nrow = 1))
 niceAllometryPlot
 
-ggsave("Results/AllometryResiduals.png", niceAllometryPlot,
+ggsave("Results/AllometryResults/AllometryResiduals.png", niceAllometryPlot,
        width = 10, height = 5, units = "in")
