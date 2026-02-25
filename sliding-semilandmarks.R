@@ -84,8 +84,8 @@ interactive_PCA <- plot_ly(data = PCA_Results,
 # Save 3D plot as interactive HTML file
 saveWidget(as_widget(interactive_PCA), "Interactive_PCA.html")
 
-# Save 3D plot as static PDF
-save_image(interactive_PCA, "Static_PCA.pdf")
+# Save 3D plot as static JPEG file
+orca(interactive_PCA, "Static_PCA.jpeg", scale = 1.5)
 
 
 
