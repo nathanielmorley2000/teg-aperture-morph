@@ -95,21 +95,26 @@ orca(interactive_PCA, "Results/MorphologyResults/Static_PCA.jpeg", scale = 1.5)
 
 # Perform a MANOVA on the three-dimensional PCA
 res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
-MANOVA_Table <- tidy(res.main) # Significant omnibus results (p << 0.001)
-MANOVA_Table
+MANOVA_Table <- tidy(res.main) 
+MANOVA_Table # Significant omnibus results (p << 0.001)
 
 # Perform ANOVA to identify which axes are significant
-ANOVA_Table <- summary.aov(res.main) # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
-ANOVA_Table
+ANOVA_Table <- summary.aov(res.main) 
+ANOVA_Table # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
 
-TukeyHSD(summary.aov(res.main))
-
+# Perform Tukey HSD on significant axes to see how things separate
+Tukey_PC1 <- tidy(TukeyHSD(aov(PC1 ~ Location, data = PCA_Results)))
+Tukey_PC1 # Significant results between Prasiola and others (p < 0.001)
+Tukey_PC3 <- tidy(TukeyHSD(aov(PC3 ~ Location, data = PCA_Results)))
+Tukey_PC3 # Significant difference between Strawberry and others (p < 0.01)
 
 # Compile and save Results into one file
 statistical_results <- list("MANOVA" = MANOVA_Table,
                             "ANOVA_PC1" = tidy(ANOVA_Table$` Response PC1`),
                             "ANOVA_PC2" = tidy(ANOVA_Table$` Response PC2`),
-                            "ANOVA_PC3" = tidy(ANOVA_Table$` Response PC3`))
+                            "ANOVA_PC3" = tidy(ANOVA_Table$` Response PC3`),
+                            "Tukey_PC1" = Tukey_PC1,
+                            "Tukey_PC3" = Tukey_PC3)
 write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalResults.xlsx")
 
 
