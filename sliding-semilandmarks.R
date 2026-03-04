@@ -2,8 +2,6 @@
 library("geomorph")
 library("RRPP")
 library("stringr")
-library("dplyr")
-library("tidyr")
 library("tibble")
 library("ggplot2")
 library("gridExtra")
@@ -105,6 +103,7 @@ ANOVA_Table # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
 # Perform Tukey HSD on significant axes to see how things separate
 Tukey_PC1 <- tidy(TukeyHSD(aov(PC1 ~ Location, data = PCA_Results)))
 Tukey_PC1 # Significant results between Prasiola and others (p < 0.001)
+
 Tukey_PC3 <- tidy(TukeyHSD(aov(PC3 ~ Location, data = PCA_Results)))
 Tukey_PC3 # Significant difference between Strawberry and others (p < 0.01)
 
