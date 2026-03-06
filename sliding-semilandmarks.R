@@ -93,7 +93,8 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                                    range = c(-0.10, 0.10)),
                       zaxis = list(title = "PC3 (11.7%)",
                                    nticks = 5,
-                                   range = c(-0.10, 0.10))))
+                                   range = c(-0.10, 0.10)),
+                      camera = list(eye = list(x = 1.75, y = 1.75, z = 1.75))))
 interactive_PCA
 
 
