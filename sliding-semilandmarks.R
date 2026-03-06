@@ -86,18 +86,22 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            marker = list(size = 7),
                            type = "scatter3d",
                            mode = "markers") %>%
-  layout(scene = list(xaxis = list(title = "PC1 (32.9%)",
+  layout(legend = list(title = list(text = 'Population'),
+                       x = 0.85, y = 0.5),  
+         scene = list(xaxis = list(title = "PC1 (32.9%)",
                                    nticks = 8,
+                                   tickformat = ".2f",
                                    range = c(-0.15, 0.15)),
                       yaxis = list(title = "PC2 (15.2%)",
                                    nticks = 5,
+                                   tickformat = ".2f",
                                    range = c(-0.10, 0.10)),
                       zaxis = list(title = "PC3 (11.7%)",
                                    nticks = 5,
+                                   tickformat = ".2f",
                                    range = c(-0.10, 0.10)),
                       camera = list(eye = list(x = 1.75, y = 1.75, z = 1.75))))
 interactive_PCA
-
 
 # Save 3D plot as interactive HTML file
 saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
