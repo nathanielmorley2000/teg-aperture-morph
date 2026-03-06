@@ -83,6 +83,7 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            z = ~PC3,
                            color = ~Location,
                            colors = c("#fc8d62", "#66c2a5", "#8da0cb"),
+                           marker = list(size = 7),
                            type = "scatter3d",
                            mode = "markers") %>%
   layout(scene = list(xaxis = list(title = "PC1 (32.9%)",
