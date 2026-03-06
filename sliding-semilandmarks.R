@@ -68,6 +68,10 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
                           PC2 = PCA$x[,2],
                           PC3 = PCA$x[,3])
 
+# Reorder plot to align with gradients
+PCA_Results <- PCA_Results %>%
+  mutate(Location = factor(Location, levels = c("Strawberry", "Mathers", "Prasiola")))
+
 
 
 ## Plot ordination =============================================================
@@ -78,8 +82,20 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            y = ~PC2,
                            z = ~PC3,
                            color = ~Location,
+                           colors = c("#fc8d62", "#66c2a5", "#8da0cb"),
                            type = "scatter3d",
-                           mode = "markers")
+                           mode = "markers") %>%
+  layout(scene = list(xaxis = list(title = "PC1 (32.9%)",
+                                   nticks = 8,
+                                   range = c(-0.15, 0.15)),
+                      yaxis = list(title = "PC2 (15.2%)",
+                                   nticks = 5,
+                                   range = c(-0.10, 0.10)),
+                      zaxis = list(title = "PC3 (11.7%)",
+                                   nticks = 5,
+                                   range = c(-0.10, 0.10))))
+interactive_PCA
+
 
 # Save 3D plot as interactive HTML file
 saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
@@ -170,7 +186,8 @@ allometryPlot <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz
 allometryPlotData <- data.frame(Predictor = allometryPlot[["plot_args"]][["x"]],
                                 Regression.Scores = allometryPlot[["plot_args"]][["y"]]) %>%
   rownames_to_column(var = "Specimen") %>%
-  add_column(Location = specific.characteristics$Location, .after = 1)
+  add_column(Location = specific.characteristics$Location, .after = 1) %>%
+  mutate(Location = factor(Location, levels = c("Strawberry", "Mathers", "Prasiola")))
   
 # Create nice allometry plot
 allometryLinePlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
@@ -205,3 +222,4 @@ niceAllometryPlot
 
 ggsave("Results/AllometryResults/AllometryResiduals.png", niceAllometryPlot,
        width = 10, height = 5, units = "in")
+
