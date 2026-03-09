@@ -87,7 +87,7 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            type = "scatter3d",
                            mode = "markers") %>%
   layout(legend = list(title = list(text = 'Population'),
-                       x = 0.85, y = 0.5),  
+                       x = 0.85, y = 0.5), 
          scene = list(xaxis = list(title = "PC1 (32.9%)",
                                    nticks = 8,
                                    tickformat = ".2f",
@@ -106,8 +106,46 @@ interactive_PCA
 # Save 3D plot as interactive HTML file
 saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
 
-# Save 3D plot as static JPEG file
-orca(interactive_PCA, "Results/MorphologyResults/Static_PCA.jpeg", scale = 1.5)
+# Save 3D plot as static SVG file
+orca(interactive_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
+
+
+
+## TPS deformations ============================================================
+
+# Set reference shape
+ref <- mshape(Procrustes$coords)
+
+# Produce tps deformations
+## PC1 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") 
+dev.off()
+
+## PC1 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS")
+dev.off()
+
+## PC2 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS")
+dev.off()
+
+## PC2 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS")
+dev.off()
+
+## PC3 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS")
+dev.off()
+
+## PC3 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS")
+dev.off()
 
 
 
@@ -137,30 +175,6 @@ statistical_results <- list("MANOVA" = MANOVA_Table,
                             "Tukey_PC1" = Tukey_PC1,
                             "Tukey_PC3" = Tukey_PC3)
 write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalResults.xlsx")
-
-
-
-## TPS deformations ============================================================
-
-# Set reference shape
-ref <- mshape(Procrustes$coords)
-
-# Save as svg
-png(filename = "Results/MorphologyResults/tpsDeformations.jpeg", height = 700, width = 500, units = "px", res = 150)
-
-# Set up plot layout
-par(mfrow=c(3,2), family="serif", mai=c(0.1,0.1,0.1,0.1))
-
-# Produce tps deformations
-plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") #PC1 minimum value
-plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS") #PC1 maximum value
-plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS") #PC2 minimum value
-plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS") #PC2 maximum value
-plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS") #PC3 minimum value
-plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS") #PC3 maximum value
-
-# Turn graphics device off
-dev.off()
 
 
 
