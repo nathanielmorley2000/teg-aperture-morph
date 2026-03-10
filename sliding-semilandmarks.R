@@ -86,28 +86,71 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            marker = list(size = 7),
                            type = "scatter3d",
                            mode = "markers") %>%
-  layout(legend = list(title = list(text = 'Population'),
-                       x = 0.85, y = 0.5), 
+  layout(legend = list(orientation = "h",
+                       xanchor = "center",
+                       x = 0.5), 
          scene = list(xaxis = list(title = "PC1 (32.9%)",
-                                   nticks = 8,
+                                   dtick = 0.05,
                                    tickformat = ".2f",
-                                   range = c(-0.15, 0.15)),
+                                   autorange = "reversed"),
                       yaxis = list(title = "PC2 (15.2%)",
                                    nticks = 5,
                                    tickformat = ".2f",
-                                   range = c(-0.10, 0.10)),
+                                   autorange = "reversed"),
                       zaxis = list(title = "PC3 (11.7%)",
                                    nticks = 5,
-                                   tickformat = ".2f",
-                                   range = c(-0.10, 0.10)),
-                      camera = list(eye = list(x = 1.75, y = 1.75, z = 1.75))))
+                                   tickformat = ".2f"),
+                      camera = list(eye = list(x = -1.25, y = 2.00, z = 0.75))))
 interactive_PCA
 
 # Save 3D plot as interactive HTML file
 saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
 
+# Add title to PCA for compound figure
+static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
+                                                      x = 0.2,
+                                                      y = 0.8))
+
 # Save 3D plot as static SVG file
-orca(interactive_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
+orca(static_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
+
+
+
+# Plot PC1 individually
+PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3) +
+  scale_x_continuous(breaks = seq(-0.10, 0.15, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#fc8d62", "Mathers" = "#66c2a5", "Prasiola" = "#8da0cb")) +
+  labs(title = "B", x = "PC1 (32.9%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/PC1.svg", PC1_Plot, width = 10, height = 2) # Save 1D plot
+
+# Plot PC2 individually
+PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3) +
+  scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#fc8d62", "Mathers" = "#66c2a5", "Prasiola" = "#8da0cb")) +
+  labs(title = "C", x = "PC2 (15.2%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/PC2.svg", PC2_Plot, width = 10, height = 2) # Save 1D plot
+
+# Plot PC3 individually
+PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3) +
+  scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#fc8d62", "Mathers" = "#66c2a5", "Prasiola" = "#8da0cb")) +
+  labs(title = "D", x = "PC3 (11.7%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/PC3.svg", PC3_Plot, width = 10, height = 2) # Save 1D plot
 
 
 
