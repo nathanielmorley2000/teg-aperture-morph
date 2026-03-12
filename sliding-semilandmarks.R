@@ -82,7 +82,7 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            y = ~PC2,
                            z = ~PC3,
                            color = ~Location,
-                           colors = c("#e7192b", "#22407c", "#58a144"),
+                           colors = c("#f9766e", "#000000", "#00bdbf"),
                            symbol = ~Location,
                            symbols = c(18, 19, 15),
                            marker = list(size = 5),
@@ -121,9 +121,9 @@ orca(static_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
 
 # Plot PC1 individually
 PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = Location)) +
-  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3.5) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.15, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#e7192b", "Mathers" = "#22407c", "Prasiola" = "#58a144")) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
   scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
   labs(title = "B", x = "PC1 (32.9%)", y = "") +
   theme_classic() +
@@ -134,9 +134,9 @@ ggsave("Results/MorphologyResults/PC1.svg", PC1_Plot, width = 10, height = 2) # 
 
 # Plot PC2 individually
 PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = Location)) +
-  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3.5) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#e7192b", "Mathers" = "#22407c", "Prasiola" = "#58a144")) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
   scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
   labs(title = "C", x = "PC2 (15.2%)", y = "") +
   theme_classic() +
@@ -147,9 +147,9 @@ ggsave("Results/MorphologyResults/PC2.svg", PC2_Plot, width = 10, height = 2) # 
 
 # Plot PC3 individually
 PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location,  shape = Location)) +
-  geom_point(position = position_jitter(width = 0, height = 0.15), size = 3.5) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#e7192b", "Mathers" = "#22407c", "Prasiola" = "#58a144")) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
   scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
   labs(title = "D", x = "PC3 (11.7%)", y = "") +
   theme_classic() +
