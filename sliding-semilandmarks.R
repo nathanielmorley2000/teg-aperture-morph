@@ -117,8 +117,6 @@ static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
 # Save 3D plot as static SVG file
 orca(static_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
 
-
-
 # Plot PC1 individually
 PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = Location)) +
   geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
@@ -262,33 +260,36 @@ allometryPlotData <- data.frame(Predictor = allometryPlot[["plot_args"]][["x"]],
 allometryLinePlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           y = Regression.Scores,
                                                           colour = Location)) +
-  geom_smooth(method = "lm", se = FALSE, aes(linetype = Location)) +
+  geom_smooth(method = "lm", se = TRUE, aes(linetype = Location, fill = Location)) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  scale_fill_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
   xlim(2.50, 3.50) +
   ylim(-0.15, 0.15) +
-  xlab("log(Spire Height [mm])") +
-  ylab("Standardized Shape Scores") +
+  coord_fixed() +
+  xlab("") +
+  ylab("") +
   ggtitle("A") +
   theme_test() +
-  theme(legend.position = "bottom",
-        legend.title=element_blank())
+  theme(legend.position = "right")
 
 allometryScatterPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           y = Regression.Scores,
                                                           colour = Location,
                                                           shape = Location)) +
   geom_point(size = 3) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
   xlim(2.50, 3.50) +
   ylim(-0.15, 0.15) +
+  coord_fixed() +
   xlab("log(Spire Height [mm])") +
   ylab("Standardized Shape Scores") +
   ggtitle("B") +
   theme_test() +
-  theme(legend.position = "bottom",
-        legend.title=element_blank())
+  theme(legend.position = "right")
 
-niceAllometryPlot <- grid.arrange(allometryLinePlot, allometryScatterPlot, layout_matrix = matrix(c(1, 2), nrow = 1))
+niceAllometryPlot <- grid.arrange(allometryLinePlot, allometryScatterPlot, nrow = 2)
 niceAllometryPlot
 
-ggsave("Results/AllometryResults/AllometryResiduals.png", niceAllometryPlot,
-       width = 10, height = 5, units = "in")
+ggsave("Results/AllometryResults/AllometryResiduals.svg", niceAllometryPlot)
 
