@@ -76,6 +76,44 @@ PCA_Results <- PCA_Results %>%
 
 
 
+## TPS deformations ============================================================
+
+# Set reference shape
+ref <- mshape(Procrustes$coords)
+
+# Produce tps deformations
+## PC1 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") 
+dev.off()
+
+## PC1 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS")
+dev.off()
+
+## PC2 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS")
+dev.off()
+
+## PC2 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS")
+dev.off()
+
+## PC3 Min
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3min.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS")
+dev.off()
+
+## PC3 Max
+svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3max.svg")
+plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS")
+dev.off()
+
+
+
 ## Plot ordination =============================================================
 
 ### Study locality =============================================================
@@ -243,44 +281,6 @@ PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = RepairScars,  shape
         axis.line.y.left = element_blank(),
         axis.ticks.y = element_blank())
 ggsave("Results/MorphologyResults/RepairScars/PC3.svg", PC3_Plot, width = 10, height = 2) # Save 1D plot
-
-
-
-## TPS deformations ============================================================
-
-# Set reference shape
-ref <- mshape(Procrustes$coords)
-
-# Produce tps deformations
-## PC1 Min
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1min.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp1$min, method="TPS") 
-dev.off()
-
-## PC1 Max
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC1max.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp1$max, method="TPS")
-dev.off()
-
-## PC2 Min
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2min.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp2$min, method="TPS")
-dev.off()
-
-## PC2 Max
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC2max.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp2$max, method="TPS")
-dev.off()
-
-## PC3 Min
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3min.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp3$min, method="TPS")
-dev.off()
-
-## PC3 Max
-svg(filename = "Results/MorphologyResults/TPS_Deformations/PC3max.svg")
-plotRefToTarget(ref, PCA$shapes$shapes.comp3$max, method="TPS")
-dev.off()
 
 
 
