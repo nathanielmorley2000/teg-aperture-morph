@@ -70,11 +70,14 @@ PCA_Results <- data.frame(Location = specific.characteristics$Location,
 
 # Reorder plot to align with gradients
 PCA_Results <- PCA_Results %>%
-  mutate(Location = factor(Location, levels = c("Strawberry", "Mathers", "Prasiola")))
+  mutate(Location = factor(Location, levels = c("Strawberry", "Mathers", "Prasiola"))) %>%
+  mutate(RepairScars = ifelse(RepairScars == 1, "Present", "Absent"))
 
 
 
 ## Plot ordination =============================================================
+
+### Study locality =============================================================
 
 # Create three-dimensional PCA plot
 interactive_PCA <- plot_ly(data = PCA_Results,
@@ -107,7 +110,7 @@ interactive_PCA <- plot_ly(data = PCA_Results,
 interactive_PCA
 
 # Save 3D plot as interactive HTML file
-saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/Interactive_PCA.html")
+saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/StudyLocality/Interactive_PCA.html")
 
 # Add title to PCA for compound figure
 static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
@@ -115,7 +118,7 @@ static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
                                                       y = 0.8))
 
 # Save 3D plot as static SVG file
-orca(static_PCA, "Results/MorphologyResults/Static_PCA.svg", scale = 1.5)
+orca(static_PCA, "Results/MorphologyResults/StudyLocality/Static_PCA.svg", scale = 1.5)
 
 # Plot PC1 individually
 PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = Location)) +
@@ -128,7 +131,7 @@ PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = L
   theme(legend.position = "none",
         axis.line.y.left = element_blank(),
         axis.ticks.y = element_blank())
-ggsave("Results/MorphologyResults/PC1.svg", PC1_Plot, width = 10, height = 2) # Save 1D plot
+ggsave("Results/MorphologyResults/StudyLocality/PC1.svg", PC1_Plot, width = 10, height = 2) # Save 1D plot
 
 # Plot PC2 individually
 PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = Location)) +
@@ -141,7 +144,7 @@ PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = L
   theme(legend.position = "none",
         axis.line.y.left = element_blank(),
         axis.ticks.y = element_blank())
-ggsave("Results/MorphologyResults/PC2.svg", PC2_Plot, width = 10, height = 2) # Save 1D plot
+ggsave("Results/MorphologyResults/StudyLocality/PC2.svg", PC2_Plot, width = 10, height = 2) # Save 1D plot
 
 # Plot PC3 individually
 PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location,  shape = Location)) +
@@ -154,7 +157,91 @@ PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location,  shape = 
   theme(legend.position = "none",
         axis.line.y.left = element_blank(),
         axis.ticks.y = element_blank())
-ggsave("Results/MorphologyResults/PC3.svg", PC3_Plot, width = 10, height = 2) # Save 1D plot
+ggsave("Results/MorphologyResults/StudyLocality/PC3.svg", PC3_Plot, width = 10, height = 2) # Save 1D plot
+
+
+
+### Repair scars ===============================================================
+
+# Create three-dimensional PCA plot
+interactive_PCA <- plot_ly(data = PCA_Results,
+                           x = ~PC1,
+                           y = ~PC2,
+                           z = ~PC3,
+                           color = ~Location,
+                           colors = c("#f9766e", "#000000", "#00bdbf"),
+                           symbol = ~Location,
+                           symbols = c(18, 19, 15),
+                           marker = list(size = 5),
+                           type = "scatter3d",
+                           mode = "markers") %>%
+  layout(legend = list(orientation = "h",
+                       xanchor = "center",
+                       x = 0.5,
+                       itemsizing = "constant"), 
+         scene = list(xaxis = list(title = "PC1 (32.9%)",
+                                   dtick = 0.05,
+                                   tickformat = ".2f",
+                                   autorange = "reversed"),
+                      yaxis = list(title = "PC2 (15.2%)",
+                                   nticks = 5,
+                                   tickformat = ".2f",
+                                   autorange = "reversed"),
+                      zaxis = list(title = "PC3 (11.7%)",
+                                   nticks = 5,
+                                   tickformat = ".2f"),
+                      camera = list(eye = list(x = -1.25, y = 2.00, z = 0.75))))
+interactive_PCA
+
+# Save 3D plot as interactive HTML file
+saveWidget(as_widget(interactive_PCA), "Results/MorphologyResults/RepairScars/Interactive_PCA.html")
+
+# Add title to PCA for compound figure
+static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
+                                                      x = 0.2,
+                                                      y = 0.8))
+
+# Save 3D plot as static SVG file
+orca(static_PCA, "Results/MorphologyResults/RepairScars/Static_PCA.svg", scale = 1.5)
+
+# Plot PC1 individually
+PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
+  scale_x_continuous(breaks = seq(-0.10, 0.15, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  labs(title = "B", x = "PC1 (32.9%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/RepairScars/PC1.svg", PC1_Plot, width = 10, height = 2) # Save 1D plot
+
+# Plot PC2 individually
+PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
+  scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  labs(title = "C", x = "PC2 (15.2%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/RepairScars/PC2.svg", PC2_Plot, width = 10, height = 2) # Save 1D plot
+
+# Plot PC3 individually
+PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location,  shape = Location)) +
+  geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
+  scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
+  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  labs(title = "D", x = "PC3 (11.7%)", y = "") +
+  theme_classic() +
+  theme(legend.position = "none",
+        axis.line.y.left = element_blank(),
+        axis.ticks.y = element_blank())
+ggsave("Results/MorphologyResults/RepairScars/PC3.svg", PC3_Plot, width = 10, height = 2) # Save 1D plot
 
 
 
@@ -198,7 +285,17 @@ dev.off()
 
 ## Perform statistics ==========================================================
 
-# Perform a MANOVA on the three-dimensional PCA
+# Perform a MANOVA on the three-dimensional PCA testing for locality
+MANOVA_Repair <- manova(cbind(PC1, PC2, PC3) ~ as.factor(RepairScars), data = PCA_Results)
+Repair_Table <- tidy(MANOVA_Repair) 
+Repair_Table # Significant omnibus results (p << 0.001)
+
+# Perform ANOVA to identify which axes are significant
+ANOVA_Table <- summary.aov(MANOVA_Repair) 
+ANOVA_Table # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
+
+
+# Perform a MANOVA on the three-dimensional PCA testing for locality
 res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
 MANOVA_Table <- tidy(res.main) 
 MANOVA_Table # Significant omnibus results (p << 0.001)
@@ -221,7 +318,7 @@ statistical_results <- list("MANOVA" = MANOVA_Table,
                             "ANOVA_PC3" = tidy(ANOVA_Table$` Response PC3`),
                             "Tukey_PC1" = Tukey_PC1,
                             "Tukey_PC3" = Tukey_PC3)
-write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalResults.xlsx")
+write.xlsx(statistical_results, file = "Results/MorphologyResults/StudyLocality/StatisticalResults.xlsx")
 
 
 
