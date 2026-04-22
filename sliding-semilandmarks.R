@@ -9,6 +9,7 @@ library("plotly")
 library("htmlwidgets")
 library("openxlsx")
 library("broom")
+library("dplyr")
 
 
 
@@ -168,10 +169,10 @@ interactive_PCA <- plot_ly(data = PCA_Results,
                            x = ~PC1,
                            y = ~PC2,
                            z = ~PC3,
-                           color = ~Location,
-                           colors = c("#f9766e", "#000000", "#00bdbf"),
-                           symbol = ~Location,
-                           symbols = c(18, 19, 15),
+                           color = ~RepairScars,
+                           colors = c("#f9766e", "#00bdbf"),
+                           symbol = ~RepairScars,
+                           symbols = c(19, 15),
                            marker = list(size = 5),
                            type = "scatter3d",
                            mode = "markers") %>%
@@ -205,11 +206,11 @@ static_PCA <- interactive_PCA %>% layout(title = list(text = "A",
 orca(static_PCA, "Results/MorphologyResults/RepairScars/Static_PCA.svg", scale = 1.5)
 
 # Plot PC1 individually
-PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = Location)) +
+PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = RepairScars, shape =RepairScars)) +
   geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.15, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  scale_color_manual(values = c("Absent" = "#f9766e", "Present" = "#00bdbf")) +
+  scale_shape_manual(values = c("Absent" = 19, "Present" = 15)) +
   labs(title = "B", x = "PC1 (32.9%)", y = "") +
   theme_classic() +
   theme(legend.position = "none",
@@ -218,11 +219,11 @@ PC1_Plot <- ggplot(PCA_Results, aes(x = PC1, y = "", color = Location, shape = L
 ggsave("Results/MorphologyResults/RepairScars/PC1.svg", PC1_Plot, width = 10, height = 2) # Save 1D plot
 
 # Plot PC2 individually
-PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = Location)) +
+PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = RepairScars, shape = RepairScars)) +
   geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  scale_color_manual(values = c("Absent" = "#f9766e",  "Present" = "#00bdbf")) +
+  scale_shape_manual(values = c("Absent" = 19, "Present" = 15)) +
   labs(title = "C", x = "PC2 (15.2%)", y = "") +
   theme_classic() +
   theme(legend.position = "none",
@@ -231,11 +232,11 @@ PC2_Plot <- ggplot(PCA_Results, aes(x = PC2, y = "", color = Location, shape = L
 ggsave("Results/MorphologyResults/RepairScars/PC2.svg", PC2_Plot, width = 10, height = 2) # Save 1D plot
 
 # Plot PC3 individually
-PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = Location,  shape = Location)) +
+PC3_Plot <- ggplot(PCA_Results, aes(x = PC3, y = "", color = RepairScars,  shape = RepairScars)) +
   geom_point(position = position_jitter(width = 0, height = 0.15), size = 4) +
   scale_x_continuous(breaks = seq(-0.10, 0.10, by = 0.05)) +
-  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
+  scale_color_manual(values = c("Absent" = "#f9766e", "Present" = "#00bdbf")) +
+  scale_shape_manual(values = c("Absent" = 19, "Present" = 15)) +
   labs(title = "D", x = "PC3 (11.7%)", y = "") +
   theme_classic() +
   theme(legend.position = "none",
@@ -285,15 +286,7 @@ dev.off()
 
 ## Perform statistics ==========================================================
 
-# Perform a MANOVA on the three-dimensional PCA testing for locality
-MANOVA_Repair <- manova(cbind(PC1, PC2, PC3) ~ as.factor(RepairScars), data = PCA_Results)
-Repair_Table <- tidy(MANOVA_Repair) 
-Repair_Table # Significant omnibus results (p << 0.001)
-
-# Perform ANOVA to identify which axes are significant
-ANOVA_Table <- summary.aov(MANOVA_Repair) 
-ANOVA_Table # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
-
+### Study locality =============================================================
 
 # Perform a MANOVA on the three-dimensional PCA testing for locality
 res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
@@ -319,6 +312,36 @@ statistical_results <- list("MANOVA" = MANOVA_Table,
                             "Tukey_PC1" = Tukey_PC1,
                             "Tukey_PC3" = Tukey_PC3)
 write.xlsx(statistical_results, file = "Results/MorphologyResults/StudyLocality/StatisticalResults.xlsx")
+
+
+
+### Repair scars ===============================================================
+
+# Perform a MANOVA on the three-dimensional PCA testing for locality
+MANOVA_Repair <- manova(cbind(PC1, PC2, PC3) ~ as.factor(RepairScars), data = PCA_Results)
+Repair_Table <- tidy(MANOVA_Repair) 
+Repair_Table # Significant omnibus results (p << 0.001)
+
+# Perform Welch's t-test on PC1 to identify any significance between groups
+Welchs_PC1 <- t.test(PCA_Results$PC1 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
+Welchs_PC1
+
+# Perform Welch's t-test on PC2 to identify any significance between groups
+Welchs_PC2 <- t.test(PCA_Results$PC2 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
+Welchs_PC2
+
+# Perform Welch's t-test on PC3 to identify any significance between groups
+Welchs_PC3 <- t.test(PCA_Results$PC3 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
+Welchs_PC3
+
+# Combine Welch's t-test results
+Welchs_Results <- bind_rows(tidy(Welchs_PC1), tidy(Welchs_PC2), tidy(Welchs_PC3)) %>%
+  select(c(statistic, parameter, p.value))
+
+# Compile and save Results into one file
+statistical_results <- list("MANOVA" = Repair_Table,
+                            "Welch's t-tests" = Welchs_Results)
+write.xlsx(statistical_results, file = "Results/MorphologyResults/RepairScars/StatisticalResults.xlsx")
 
 
 
