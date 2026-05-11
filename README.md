@@ -1,10 +1,9 @@
 # Overview
 
-This data and code repository is supplemental to the manuscript "Tegula funebralis 
+This data and code repository is supplemental to the manuscript "*Tegula funebralis* 
 populations possess distinct aperture morphologies corresponding to an energy and 
 predation gradient," currently under review. All data and code required to replicate 
 this analysis are contained within this repository.
-
 
 
 # Software Requirements
@@ -24,4 +23,43 @@ are required to execute the code:
 - `stringr`
 - `tibble`
 
-The full references for these packages can be found in Supplementary Table 1 of the manuscript.
+The full references for these packages can be found in Supplementary Table 1 of the 
+corresponding manuscript.
+
+
+# Repository Guide
+
+## Repository Root
+
+The root of the repository contains the file `sliding-semilandmarks.R`, which is
+used to perform the analysis and generate any plots and tables. When executed, this 
+script will use data in the `Data/` subdirectory to reproduce the analyses in the `Results/` 
+subdirectory.
+
+Four additional files are included in the root of the repository to help with repository organization
+and documentations: `.gitattributes`, `.gitignore`, `ReadMe.md`, and `teg-aperture-morph.Rproj`. These 
+files do not contribute to the results in any way.
+
+
+### Data/ subdirectory
+
+The `Data/` subdirectory contains all of the data required to reproduce the analysis. 
+All *Tegula funebralis* photos are located in the `Data/AllPhotos/` folder. `Data/TegulaOutlines.TPS` 
+contains landmark data for the 30 best photographs from each locality, generated using the programs `TPSUtil` and 
+`TPSDig`. `Data/Sliders.csv` contains the bounding coordinates for the sliding semi-landmarks. 
+`Data/TegulaCharacteristicsList.csv` contains non-landmark data used in our analyses. 
+
+
+## Results/ subdirectory
+
+The `Results/` subdirectory contains all of the outputs from the R script. `Results/ProcrustesCoords.csv` 
+contains coordinates for the Procrustes-transformed landmarks. The `Results/MorphologyResults/` folder contains
+PCA and TPS outputs, and the `Results/AllometryResults/` folder contains results from the (linear) allometric 
+models.
+
+
+# Contact
+
+If there are any issues with this code, please contact Nathaniel Morley via email 
+at nmorley@ualberta.ca.
+
