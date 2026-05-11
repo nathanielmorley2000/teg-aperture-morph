@@ -347,69 +347,61 @@ write.xlsx(statistical_results, file = "Results/MorphologyResults/RepairScars/St
 
 # ALLOMETRIC VARIATION =========================================================
 
-# Produce common allometry model
-commonAllometry <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
-                print.progress = FALSE)
+# Produce simple allomtery model
+simpleAllom <- procD.lm(coords ~ log(height), data = GPA.Results, print.progress = FALSE)
+
+# Produce common allometry models
+commonAllom1 <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
+                         print.progress = FALSE)
+commonAllom2 <- procD.lm(coords ~ log(height) + repairs, data = GPA.Results,
+                         print.progress = FALSE)
+commonAllom3 <- procD.lm(coords ~ log(height) + (location + repairs), data = GPA.Results,
+                         print.progress = FALSE)
+commonAllom4 <- procD.lm(coords ~ log(height) + (location * repairs), data = GPA.Results,
+                         print.progress = FALSE)
 
 # Produce unique allometries model
-uniqueAllometry <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
+uniqueAllom1 <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
                  print.progress = FALSE)
+uniqueAllom2 <- procD.lm(coords ~ log(height) * repairs, data = GPA.Results,
+                         print.progress = FALSE)
+uniqueAllom3 <- procD.lm(coords ~ log(height) * (location + repairs), data = GPA.Results,
+                         print.progress = FALSE)
+uniqueAllom4 <- procD.lm(coords ~ log(height) * (location * repairs), data = GPA.Results,
+                         print.progress = FALSE)
 
 # Compare models to find which is most likely
-modComp <- model.comparison(commonAllometry, uniqueAllometry, 
+modComp <- model.comparison(simpleAllom, commonAllom1, commonAllom2, commonAllom3, commonAllom4,
+                            uniqueAllom1, uniqueAllom2, uniqueAllom3, uniqueAllom4,
                             type = "logLik")
 modCompData <- summary(modComp)
 write.csv(modCompData, "Results/AllometryResults/modCompData.csv")
 
-# Model output for common allometry model (most likely)
-commonAllometryData <- summary(commonAllometry)$table
-write.csv(commonAllometryData, "Results/AllometryResults/commonAllometryData.csv", row.names = TRUE)
+# Model output for common allometry model against predation history (most likely)
+simpleAllometryData <- summary(simpleAllom)$table
+write.csv(simpleAllometryData, "Results/AllometryResults/simpleAllometryData.csv", row.names = TRUE)
 
 # Create allometry plot using default graphics
-allometryPlot <- plotAllometry(commonAllometry, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
-                               pch = 19, col = as.numeric(GPA.Results$location))
+allometryPlot <- plotAllometry(simpleAllom, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
+                               pch = 19)
 
 # Create data frame with allometry plot for ggplot
 allometryPlotData <- data.frame(Predictor = allometryPlot[["plot_args"]][["x"]],
                                 Regression.Scores = allometryPlot[["plot_args"]][["y"]]) %>%
-  rownames_to_column(var = "Specimen") %>%
-  add_column(Location = specific.characteristics$Location, .after = 1) %>%
-  mutate(Location = factor(Location, levels = c("Strawberry", "Mathers", "Prasiola")))
+  rownames_to_column(var = "Specimen")
   
 # Create nice allometry plot
 allometryLinePlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
-                                                          y = Regression.Scores,
-                                                          colour = Location)) +
-  geom_smooth(method = "lm", se = TRUE, aes(linetype = Location, fill = Location)) +
-  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  scale_fill_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  xlim(2.50, 3.50) +
-  ylim(-0.15, 0.15) +
-  coord_fixed() +
-  xlab("") +
-  ylab("") +
-  ggtitle("A") +
-  theme_test() +
-  theme(legend.position = "right")
-
-allometryScatterPlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
-                                                          y = Regression.Scores,
-                                                          colour = Location,
-                                                          shape = Location)) +
+                                                          y = Regression.Scores)) +
+  geom_smooth(method = "lm", se = FALSE, color = "black") +
   geom_point(size = 3) +
-  scale_color_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
-  scale_shape_manual(values = c("Strawberry" = 18, "Mathers" = 19, "Prasiola" = 15)) +
-  xlim(2.50, 3.50) +
-  ylim(-0.15, 0.15) +
+  scale_x_continuous(limits = c(2.50, 3.50), expand = c(0,0)) +
+  scale_y_continuous(limits = c(-0.15, 0.15)) +
   coord_fixed() +
   xlab("log(Spire Height [mm])") +
   ylab("Standardized Shape Scores") +
-  ggtitle("B") +
   theme_test() +
   theme(legend.position = "right")
 
-niceAllometryPlot <- grid.arrange(allometryLinePlot, allometryScatterPlot, nrow = 2)
-niceAllometryPlot
-
-ggsave("Results/AllometryResults/AllometryResiduals.svg", niceAllometryPlot)
+ggsave("Results/AllometryResults/allometryLinePlot.svg", allometryLinePlot)
 

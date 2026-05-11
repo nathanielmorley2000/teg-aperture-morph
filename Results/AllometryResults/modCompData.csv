@@ -1,3 +1,10 @@
 "","logLik","residual.pc.no","penalty","AIC"
+"log(height)",9778.00247871089,89,8366,-11190.0049574218
 "log(height) + location",9784.22647220601,89,8722,-10846.452944412
+"log(height) + repairs",9779.47142283357,89,8544,-11014.9428456671
+"log(height) + location + repairs",9784.84877919811,89,8900,-10669.6975583962
+"log(height) + location + repairs + location:repairs",9785.95244791765,89,9256,-10315.9048958353
 "log(height) + location + log(height):location",9785.48756236353,89,9078,-10492.9751247271
+"log(height) + repairs + log(height):repairs",9781.05734375773,89,8722,-10840.1146875155
+"log(height) + location + repairs + log(height):location + log(height):repairs",9787.24755824769,89,9434,-10140.4951164954
+"log(height) + location + repairs + location:repairs + log(height):location + log(height):repairs + log(height):location:repairs",9790.01651199473,89,10146,-9434.03302398947
