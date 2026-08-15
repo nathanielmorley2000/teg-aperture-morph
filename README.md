@@ -1,7 +1,7 @@
 # Overview
 
 This data and code repository is supplemental to the manuscript "*Tegula funebralis* 
-populations possess distinct aperture morphologies corresponding to an energy and 
+populations possess distinct aperture shapes corresponding to an energy and 
 predation gradient," currently under review. All data and code required to replicate 
 this analysis are contained within this repository.
 
