@@ -59,7 +59,14 @@ GPA.Results <- geomorph.data.frame(Procrustes,
 
 # Produce simple PCA (no size correction)
 PCA <- gm.prcomp(GPA.Results$coords)
-summary(PCA)
+
+# Create eigenvalues table for principal components and save to CSV file
+PCA_summary <- summary(PCA)
+PCA_summary <- as.data.frame(t(PCA_summary$PC.summary)) %>%
+  rownames_to_column(var = "Principal.Component") %>%
+  mutate(Principal.Component = str_replace_all(Principal.Component, "Comp", "PC")) %>%
+  mutate(across(-Principal.Component, ~ signif(., 3)))
+write.csv(PCA_summary, "Results/PrincipalComponents.csv", row.names = FALSE)
 
 # First three PCs explain the most variation. Create dataframe with first three PCs
 PCA_Results <- data.frame(Location = specific.characteristics$Location,
@@ -284,33 +291,28 @@ ggsave("Results/MorphologyResults/RepairScars/PC3.svg", PC3_Plot, width = 10, he
 
 
 
-## Perform statistics ==========================================================
+## Procrustes ANOVA ============================================================
 
-### Study locality =============================================================
+# Perform Procrustes ANOVA with location as group
+locality <- procD.lm(coords ~ location, data = GPA.Results, RRPP = TRUE, print.progress = FALSE)
+summary_locality <- summary(locality, formula = FALSE)
 
-# Perform a MANOVA on the three-dimensional PCA testing for locality
-res.main <- manova(cbind(PC1, PC2, PC3) ~ Location, data = PCA_Results)
-MANOVA_Table <- tidy(res.main) 
-MANOVA_Table # Significant omnibus results (p << 0.001)
+# Omnibus successful, calculate pairwise distances between groups
+PW <- pairwise(locality, groups = GPA.Results$location, covariate = NULL)
+summary_PW <- summary(PW, confidence = 0.95, test.type = "dist", stat.table = TRUE)
+summary_PW <- summary_PW$summary.table %>%
+  rownames_to_column(var = "locality")
 
-# Perform ANOVA to identify which axes are significant
-ANOVA_Table <- summary.aov(res.main) 
-ANOVA_Table # Significant results on PC1 (p << 0.001) and PC3 (p << 0.001)
 
-# Perform Tukey HSD on significant axes to see how things separate
-Tukey_PC1 <- tidy(TukeyHSD(aov(PC1 ~ Location, data = PCA_Results)))
-Tukey_PC1 # Significant results between Prasiola and others (p < 0.001)
+# Perform Procrustes ANOVA with location as group
+predation <- procD.lm(coords ~ repairs, data = GPA.Results, RRPP = TRUE, print.progress = FALSE)
+summary_predation <- summary(predation) # Omnibus unsuccessful, no pairwise or two-factor models
 
-Tukey_PC3 <- tidy(TukeyHSD(aov(PC3 ~ Location, data = PCA_Results)))
-Tukey_PC3 # Significant difference between Strawberry and others (p < 0.01)
 
 # Compile and save Results into one file
-statistical_results <- list("MANOVA" = MANOVA_Table,
-                            "ANOVA_PC1" = tidy(ANOVA_Table$` Response PC1`),
-                            "ANOVA_PC2" = tidy(ANOVA_Table$` Response PC2`),
-                            "ANOVA_PC3" = tidy(ANOVA_Table$` Response PC3`),
-                            "Tukey_PC1" = Tukey_PC1,
-                            "Tukey_PC3" = Tukey_PC3)
+statistical_results <- list("Locality_Omnibus" = tidy(summary_locality$table),
+                            "Locality_Pairwise" = summary_PW,
+                            "Predation_Omnibus" = tidy(summary_predation$table))
 write.xlsx(statistical_results, file = "Results/MorphologyResults/StudyLocality/StatisticalResults.xlsx")
 
 
@@ -348,26 +350,26 @@ write.xlsx(statistical_results, file = "Results/MorphologyResults/RepairScars/St
 # ALLOMETRIC VARIATION =========================================================
 
 # Produce simple allomtery model
-simpleAllom <- procD.lm(coords ~ log(height), data = GPA.Results, print.progress = FALSE)
+simpleAllom <- procD.lm(coords ~ log(Csize), data = GPA.Results, print.progress = FALSE)
 
 # Produce common allometry models
-commonAllom1 <- procD.lm(coords ~ log(height) + location, data = GPA.Results,
+commonAllom1 <- procD.lm(coords ~ log(Csize) + location, data = GPA.Results,
                          print.progress = FALSE)
-commonAllom2 <- procD.lm(coords ~ log(height) + repairs, data = GPA.Results,
+commonAllom2 <- procD.lm(coords ~ log(Csize) + repairs, data = GPA.Results,
                          print.progress = FALSE)
-commonAllom3 <- procD.lm(coords ~ log(height) + (location + repairs), data = GPA.Results,
+commonAllom3 <- procD.lm(coords ~ log(Csize) + (location + repairs), data = GPA.Results,
                          print.progress = FALSE)
-commonAllom4 <- procD.lm(coords ~ log(height) + (location * repairs), data = GPA.Results,
+commonAllom4 <- procD.lm(coords ~ log(Csize) + (location * repairs), data = GPA.Results,
                          print.progress = FALSE)
 
 # Produce unique allometries model
-uniqueAllom1 <- procD.lm(coords ~ log(height) * location, data = GPA.Results,
+uniqueAllom1 <- procD.lm(coords ~ log(Csize) * location, data = GPA.Results,
                  print.progress = FALSE)
-uniqueAllom2 <- procD.lm(coords ~ log(height) * repairs, data = GPA.Results,
+uniqueAllom2 <- procD.lm(coords ~ log(Csize) * repairs, data = GPA.Results,
                          print.progress = FALSE)
-uniqueAllom3 <- procD.lm(coords ~ log(height) * (location + repairs), data = GPA.Results,
+uniqueAllom3 <- procD.lm(coords ~ log(Csize) * (location + repairs), data = GPA.Results,
                          print.progress = FALSE)
-uniqueAllom4 <- procD.lm(coords ~ log(height) * (location * repairs), data = GPA.Results,
+uniqueAllom4 <- procD.lm(coords ~ log(Csize) * (location * repairs), data = GPA.Results,
                          print.progress = FALSE)
 
 # Compare models to find which is most likely
