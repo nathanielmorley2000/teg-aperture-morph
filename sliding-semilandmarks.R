@@ -313,37 +313,7 @@ summary_predation <- summary(predation) # Omnibus unsuccessful, no pairwise or t
 statistical_results <- list("Locality_Omnibus" = tidy(summary_locality$table),
                             "Locality_Pairwise" = summary_PW,
                             "Predation_Omnibus" = tidy(summary_predation$table))
-write.xlsx(statistical_results, file = "Results/MorphologyResults/StudyLocality/StatisticalResults.xlsx")
-
-
-
-### Repair scars ===============================================================
-
-# Perform a MANOVA on the three-dimensional PCA testing for locality
-MANOVA_Repair <- manova(cbind(PC1, PC2, PC3) ~ as.factor(RepairScars), data = PCA_Results)
-Repair_Table <- tidy(MANOVA_Repair) 
-Repair_Table # Significant omnibus results (p << 0.001)
-
-# Perform Welch's t-test on PC1 to identify any significance between groups
-Welchs_PC1 <- t.test(PCA_Results$PC1 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
-Welchs_PC1
-
-# Perform Welch's t-test on PC2 to identify any significance between groups
-Welchs_PC2 <- t.test(PCA_Results$PC2 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
-Welchs_PC2
-
-# Perform Welch's t-test on PC3 to identify any significance between groups
-Welchs_PC3 <- t.test(PCA_Results$PC3 ~ as.factor(PCA_Results$RepairScars), alternative = "two.sided", var.equal = FALSE)
-Welchs_PC3
-
-# Combine Welch's t-test results
-Welchs_Results <- bind_rows(tidy(Welchs_PC1), tidy(Welchs_PC2), tidy(Welchs_PC3)) %>%
-  select(c(statistic, parameter, p.value))
-
-# Compile and save Results into one file
-statistical_results <- list("MANOVA" = Repair_Table,
-                            "Welch's t-tests" = Welchs_Results)
-write.xlsx(statistical_results, file = "Results/MorphologyResults/RepairScars/StatisticalResults.xlsx")
+write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalResults.xlsx")
 
 
 
