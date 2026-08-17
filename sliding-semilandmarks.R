@@ -340,7 +340,7 @@ simpleAllometryData <- summary(simpleAllom)$table
 write.csv(simpleAllometryData, "Results/AllometryResults/simpleAllometryData.csv", row.names = TRUE)
 
 # Create allometry plot using default graphics
-allometryPlot <- plotAllometry(simpleAllom, size = GPA.Results$height, logsz = TRUE, method = "RegScore",
+allometryPlot <- plotAllometry(simpleAllom, size = GPA.Results$Csize, logsz = TRUE, method = "RegScore",
                                pch = 19)
 
 # Create data frame with allometry plot for ggplot
@@ -353,10 +353,7 @@ allometryLinePlot <- ggplot(data = allometryPlotData, aes(x = Predictor,
                                                           y = Regression.Scores)) +
   geom_smooth(method = "lm", se = FALSE, color = "black") +
   geom_point(size = 3) +
-  scale_x_continuous(limits = c(2.50, 3.50), expand = c(0,0)) +
-  scale_y_continuous(limits = c(-0.15, 0.15)) +
-  coord_fixed() +
-  xlab("log(Spire Height [mm])") +
+  xlab("log(Centroid Size)") +
   ylab("Standardized Shape Scores") +
   theme_test() +
   theme(legend.position = "right")
