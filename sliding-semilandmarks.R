@@ -293,26 +293,12 @@ dev.off()
 
 ## Procrustes ANOVA ============================================================
 
-# Perform Procrustes ANOVA with location as group
-locality <- procD.lm(coords ~ location, data = GPA.Results, RRPP = TRUE, print.progress = FALSE)
-summary_locality <- summary(locality, formula = FALSE)
-
-# Omnibus successful, calculate pairwise distances between groups
-PW <- pairwise(locality, groups = GPA.Results$location, covariate = NULL)
-summary_PW <- summary(PW, confidence = 0.95, test.type = "dist", stat.table = TRUE)
-summary_PW <- summary_PW$summary.table %>%
-  rownames_to_column(var = "locality")
-
-
-# Perform Procrustes ANOVA with location as group
-predation <- procD.lm(coords ~ repairs, data = GPA.Results, RRPP = TRUE, print.progress = FALSE)
-summary_predation <- summary(predation) # Omnibus unsuccessful, no pairwise or two-factor models
-
+# Create two-factor Procrustes ANOVA with interaction term
+interactive <- procD.lm(coords ~ location * repairs, data = GPA.Results, RRPP = TRUE, print.progress = FALSE)
+summary_interactive <- summary(interactive, formula = FALSE)
 
 # Compile and save Results into one file
-statistical_results <- list("Locality_Omnibus" = tidy(summary_locality$table),
-                            "Locality_Pairwise" = summary_PW,
-                            "Predation_Omnibus" = tidy(summary_predation$table))
+statistical_results <- list("Two-factor ANOVA" = tidy(summary_interactive$table))
 write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalResults.xlsx")
 
 
