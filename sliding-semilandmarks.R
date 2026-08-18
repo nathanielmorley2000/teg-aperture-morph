@@ -305,6 +305,42 @@ write.xlsx(statistical_results, file = "Results/MorphologyResults/StatisticalRes
 
 # ALLOMETRIC VARIATION =========================================================
 
+## Spire height comparisons ====================================================
+
+# Summary statistics for each population
+summary.stats <- specific.characteristics %>% 
+  group_by(Location) %>%
+  summarize(mean_height = mean(Height..mm.),
+            standard_devation_height = sd(Height..mm.),
+            repair_scars = mean(Repair.Scars..0.1.))
+
+# Reorder factors so they appear correctly
+specific.characteristics$Location <- factor(specific.characteristics$Location , levels = c("Strawberry", "Mathers", "Prasiola"))
+
+# Generate boxplot
+boxplot <- ggplot(specific.characteristics, aes(x = Location, y = Height..mm., fill = Location)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Strawberry" = "#f9766e", "Mathers" = "#000000", "Prasiola" = "#00bdbf")) +
+  labs(x = "Study Locality", y = "Spire Height [mm]") +
+  theme_test() +
+  theme(legend.position = "none")
+ggsave("Results/AllometryResults/sizeBozplot.svg", boxplot)
+
+# Perform One-Way ANOVA
+one.way_ANOVA <- aov(Height..mm. ~ Location, data = specific.characteristics)
+one.way_summary <- summary(one.way_ANOVA)
+Tukey1 <- tidy(TukeyHSD(one.way_ANOVA))
+
+# Compile and save results
+statistical_results <- list("Summary Statistics" = summary.stats,
+                            "ANOVA" = one.way_summary[[1]],
+                            "Tukey" = Tukey1)
+write.xlsx(statistical_results, file = "Results/AllometryResults/SpireHeightComparisons.xlsx")
+
+
+
+# Allometric modelling =========================================================
+
 # Produce simple allomtery model
 simpleAllom <- procD.lm(coords ~ log(Csize), data = GPA.Results, print.progress = FALSE)
 
@@ -320,7 +356,7 @@ commonAllom4 <- procD.lm(coords ~ log(Csize) + (location * repairs), data = GPA.
 
 # Produce unique allometries model
 uniqueAllom1 <- procD.lm(coords ~ log(Csize) * location, data = GPA.Results,
-                 print.progress = FALSE)
+                         print.progress = FALSE)
 uniqueAllom2 <- procD.lm(coords ~ log(Csize) * repairs, data = GPA.Results,
                          print.progress = FALSE)
 uniqueAllom3 <- procD.lm(coords ~ log(Csize) * (location + repairs), data = GPA.Results,
