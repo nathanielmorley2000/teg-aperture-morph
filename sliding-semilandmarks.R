@@ -66,7 +66,7 @@ PCA_summary <- as.data.frame(t(PCA_summary$PC.summary)) %>%
   rownames_to_column(var = "Principal.Component") %>%
   mutate(Principal.Component = str_replace_all(Principal.Component, "Comp", "PC")) %>%
   mutate(across(-Principal.Component, ~ signif(., 3)))
-write.csv(PCA_summary, "Results/PrincipalComponents.csv", row.names = FALSE)
+write.csv(PCA_summary, "Results/MorphologyResults/PrincipalComponents.csv", row.names = FALSE)
 
 # First three PCs explain the most variation. Create dataframe with first three PCs
 PCA_Results <- data.frame(Location = specific.characteristics$Location,
