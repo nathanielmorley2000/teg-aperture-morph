@@ -54,8 +54,10 @@ contains landmark data for the 30 best photographs from each locality, generated
 
 The `Results/` subdirectory contains all of the outputs from the R script. `Results/ProcrustesCoords.csv` 
 contains coordinates for the Procrustes-transformed landmarks. The `Results/MorphologyResults/` folder contains
-PCA and TPS outputs, and the `Results/AllometryResults/` folder contains results from the (linear) allometric 
-models. Interactive three-dimensional PCA plots are located in the `Results/MorphologyResults/*/Interactive_PCA.html` files.
+PCA and TPS outputs, as well as associated statistical tests. Interactive three-dimensional PCA plots are 
+located in the `Results/MorphologyResults/*/Interactive_PCA.html` files. The 
+`Results/AllometryResults/` folder contains graphical and statistical results 
+relating to growth and allometry.
 
 
 # Contact
