@@ -1,9 +1,11 @@
 # Overview
 
-This data and code repository is supplemental to the manuscript "*Tegula funebralis* 
-populations possess distinct aperture shapes corresponding to an energy and 
-predation gradient," currently under review. All data and code required to replicate 
-this analysis are contained within this repository.
+This data and code repository is supplemental to the manuscript:
+
+Morley NED,* Johnston-Gramlich W, Risley Z, Baxter AG, Alexander J, Leighton LR. 2026. *Tegula funebralis* populations possess 
+distinct aperture shapes corresponding to an energy and predation gradient. J Exp Mar Biol Ecol. 604:152223. (https://doi.org/10.1016/j.jembe.2026.152223)[https://doi.org/10.1016/j.jembe.2026.152223] 
+
+All data and code required to replicate this analysis are contained within this repository.
 
 
 # Software Requirements
